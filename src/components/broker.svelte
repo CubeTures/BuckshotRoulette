@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { connection } from '../scripts/store';
+	import { connected, connection } from '../scripts/store';
 
 	const servers = {
 		iceServers: [
@@ -26,6 +26,7 @@
 		if (!$connection) {
 			const pc = new RTCPeerConnection(servers);
 			connection.set(pc);
+			connected.set(true);
 		}
 	});
 </script>

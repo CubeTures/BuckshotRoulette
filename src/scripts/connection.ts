@@ -1,6 +1,6 @@
 import { get } from 'svelte/store';
 import { createDocument, getData as getDocumentData, getDocument } from './firestore';
-import { connection } from './store';
+import { channel, connected, connection, host } from './store';
 import {
 	addDoc,
 	collection,
@@ -14,6 +14,8 @@ import type { Description } from '../interfaces/rtcInterfaces';
 
 // create a room
 export async function createOffer() {
+	host.set(true);
+
 	const pc = get(connection);
 	const offer = await getOfferDescription(pc);
 	const doc = await createDocument({ offer });
@@ -49,6 +51,8 @@ function listenForAnswer(pc: RTCPeerConnection, doc: DocumentReference<any, Docu
 
 // join an existing room
 export async function acceptOffer(id: string): Promise<void> {
+	host.set(false);
+
 	const pc = get(connection);
 	const doc = getDocument(id);
 
@@ -63,16 +67,6 @@ export async function acceptOffer(id: string): Promise<void> {
 	} else {
 		throw new Error('Offer does not exists in the room.');
 	}
-}
-
-async function getAnswerDescription(pc: RTCPeerConnection): Promise<Description> {
-	const answerDescription = await pc.createAnswer();
-	await pc.setLocalDescription(answerDescription);
-
-	return {
-		sdp: answerDescription.sdp,
-		type: answerDescription.type
-	};
 }
 
 async function readRoomOffer(
@@ -93,8 +87,18 @@ async function writeAnswer(
 	pc: RTCPeerConnection,
 	doc: DocumentReference<DocumentData, DocumentData>
 ): Promise<void> {
-	const answer = getAnswerDescription(pc);
+	const answer = await getAnswerDescription(pc);
 	await updateDoc(doc, { answer });
+}
+
+async function getAnswerDescription(pc: RTCPeerConnection): Promise<Description> {
+	const answerDescription = await pc.createAnswer();
+	await pc.setLocalDescription(answerDescription);
+
+	return {
+		sdp: answerDescription.sdp,
+		type: answerDescription.type
+	};
 }
 
 function updateLocalCandidates(
@@ -108,6 +112,7 @@ function updateLocalCandidates(
 
 function setRemoteDescription(pc: RTCPeerConnection, data: Description) {
 	const description = new RTCSessionDescription(data);
+	console.log(`Connected ${data.type}`);
 	pc.setRemoteDescription(description);
 }
 

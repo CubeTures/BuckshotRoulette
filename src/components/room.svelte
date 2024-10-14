@@ -18,6 +18,7 @@
 	}
 </script>
 
+<br />
 <button on:click={create}>Create Room</button>
 {#if createId != ''}
 	<p>Room ID: {createId}</p>
