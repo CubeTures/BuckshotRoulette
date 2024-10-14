@@ -1,29 +1,34 @@
 import { get } from 'svelte/store';
-import { createDocument, getData, getDocument } from './firestore';
+import { createDocument, getData as getDocumentData, getDocument } from './firestore';
 import { connection } from './store';
 import {
 	addDoc,
 	collection,
+	CollectionReference,
 	onSnapshot,
 	updateDoc,
 	type DocumentData,
 	type DocumentReference
 } from 'firebase/firestore';
+import type { Description } from '../interfaces/rtcInterfaces';
 
-// called when wanting to create a room
+// create a room
 export async function createOffer() {
-	const offer = await getOffer();
+	const pc = get(connection);
+	const offer = await getOfferDescription(pc);
 	const doc = await createDocument({ offer });
 
-	listenIceCandidates(doc);
-	listenOffers(doc);
-	listenAcceptOffer(doc);
+	const offerCandidates = collection(doc, 'offerCandidates');
+	const answerCandidates = collection(doc, 'answerCandidates');
+
+	updateLocalCandidates(pc, offerCandidates);
+	listenForAnswer(pc, doc);
+	updateRemoteCandidates(pc, answerCandidates);
 
 	return doc;
 }
 
-async function getOffer() {
-	const pc = get(connection);
+async function getOfferDescription(pc: RTCPeerConnection): Promise<Description> {
 	const offerDescription = await pc.createOffer();
 	await pc.setLocalDescription(offerDescription);
 
@@ -33,75 +38,89 @@ async function getOffer() {
 	};
 }
 
-// updating personal candidates
-function listenIceCandidates(doc: DocumentReference<any, DocumentData>) {
-	const offerCandidates = collection(doc, 'offerCandidates');
-
-	const pc = get(connection);
-	pc.onicecandidate = (event: RTCPeerConnectionIceEvent) => {
-		event.candidate && addDoc(offerCandidates, event.candidate.toJSON());
-	};
-}
-
-// I'm not sure
-function listenOffers(doc: DocumentReference<any, DocumentData>) {
-	const pc = get(connection);
+function listenForAnswer(pc: RTCPeerConnection, doc: DocumentReference<any, DocumentData>): void {
 	onSnapshot(doc, (snapshot) => {
 		const data = snapshot.data();
 		if (!pc.currentRemoteDescription && data?.answer) {
-			const answerDescription = new RTCSessionDescription(data.answer);
-			pc.setRemoteDescription(answerDescription);
+			setRemoteDescription(pc, data.answer);
 		}
 	});
 }
 
-// fires when call accepted
-function listenAcceptOffer(doc: DocumentReference<any, DocumentData>) {
-	const answerCandidates = collection(doc, 'answerCandidates');
-
+// join an existing room
+export async function acceptOffer(id: string): Promise<void> {
 	const pc = get(connection);
-	onSnapshot(answerCandidates, (snapshot) => {
-		snapshot.docChanges().forEach((change) => {
-			if (change.type === 'added') {
-				const candidate = new RTCIceCandidate(change.doc.data());
-				pc.addIceCandidate(candidate);
-			}
-		});
-	});
-}
-
-// called when wanting to join an existing room
-export async function acceptOffer(id: string) {
 	const doc = getDocument(id);
+
 	const offerCandidates = collection(doc, 'offerCandidates');
 	const answerCandidates = collection(doc, 'answerCandidates');
 
-	const pc = get(connection);
-	pc.onicecandidate = (event) => {
-		event.candidate && addDoc(answerCandidates, event.candidate.toJSON());
-	};
+	const offerExists = await readRoomOffer(pc, doc);
+	if (offerExists) {
+		updateLocalCandidates(pc, answerCandidates);
+		writeAnswer(pc, doc);
+		updateRemoteCandidates(pc, offerCandidates);
+	} else {
+		throw new Error('Offer does not exists in the room.');
+	}
+}
 
-	const roomData = await getData(doc);
-
-	console.log(roomData);
-	const offerDescription = roomData.offer;
-	await pc.setRemoteDescription(new RTCSessionDescription(offerDescription));
-
+async function getAnswerDescription(pc: RTCPeerConnection): Promise<Description> {
 	const answerDescription = await pc.createAnswer();
 	await pc.setLocalDescription(answerDescription);
 
-	const answer = {
+	return {
 		sdp: answerDescription.sdp,
 		type: answerDescription.type
 	};
+}
 
+async function readRoomOffer(
+	pc: RTCPeerConnection,
+	doc: DocumentReference<any, DocumentData>
+): Promise<boolean> {
+	const roomData = await getDocumentData(doc);
+
+	if (roomData.offer) {
+		setRemoteDescription(pc, roomData.offer);
+		return true;
+	}
+
+	return false;
+}
+
+async function writeAnswer(
+	pc: RTCPeerConnection,
+	doc: DocumentReference<DocumentData, DocumentData>
+): Promise<void> {
+	const answer = getAnswerDescription(pc);
 	await updateDoc(doc, { answer });
+}
 
-	onSnapshot(offerCandidates, (snapshot) => {
+function updateLocalCandidates(
+	pc: RTCPeerConnection,
+	candidates: CollectionReference<DocumentData, DocumentData>
+): void {
+	pc.onicecandidate = (event: RTCPeerConnectionIceEvent) => {
+		event.candidate && addDoc(candidates, event.candidate.toJSON());
+	};
+}
+
+function setRemoteDescription(pc: RTCPeerConnection, data: Description) {
+	const description = new RTCSessionDescription(data);
+	pc.setRemoteDescription(description);
+}
+
+function updateRemoteCandidates(
+	pc: RTCPeerConnection,
+	candidates: CollectionReference<DocumentData, DocumentData>
+) {
+	onSnapshot(candidates, (snapshot) => {
 		snapshot.docChanges().forEach((change) => {
 			if (change.type === 'added') {
 				const data = change.doc.data();
-				pc.addIceCandidate(new RTCIceCandidate(data));
+				const candidate = new RTCIceCandidate(data);
+				pc.addIceCandidate(candidate);
 			}
 		});
 	});
