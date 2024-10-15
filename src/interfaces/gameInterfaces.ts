@@ -27,3 +27,8 @@ export function getOtherPlayer(player: PlayerType): PlayerType {
 
 	return 'host';
 }
+
+export interface RoomPreset {
+	id: string;
+	role: PlayerType;
+}

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { connected, connection } from '../scripts/store';
+	import { connection, preset } from '../scripts/store';
 
 	const servers = {
 		iceServers: [

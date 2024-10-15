@@ -1,11 +1,12 @@
 import { get } from 'svelte/store';
-import { createDocument, getData as getDocumentData, getDocument } from './firestore';
-import { channel, connected, connection, host } from './store';
+import { createDocument, getDocumentData, getDocument } from './firestore';
+import { connection, host } from './store';
 import {
 	addDoc,
 	collection,
 	CollectionReference,
 	onSnapshot,
+	setDoc,
 	updateDoc,
 	type DocumentData,
 	type DocumentReference
@@ -13,12 +14,12 @@ import {
 import type { Description } from '../interfaces/rtcInterfaces';
 
 // create a room
-export async function createOffer() {
+export async function createOffer(id?: string) {
 	host.set(true);
 
 	const pc = get(connection);
 	const offer = await getOfferDescription(pc);
-	const doc = await createDocument({ offer });
+	const doc = await getOfferDoc(offer, id);
 
 	const offerCandidates = collection(doc, 'offerCandidates');
 	const answerCandidates = collection(doc, 'answerCandidates');
@@ -38,6 +39,15 @@ async function getOfferDescription(pc: RTCPeerConnection): Promise<Description> 
 		sdp: offerDescription.sdp,
 		type: offerDescription.type
 	};
+}
+
+async function getOfferDoc(offer: Description, id?: string) {
+	if (id) {
+		const doc = getDocument(id);
+		await setDoc(doc, { offer });
+		return doc;
+	}
+	return await createDocument({ offer });
 }
 
 function listenForAnswer(pc: RTCPeerConnection, doc: DocumentReference<any, DocumentData>): void {
@@ -124,8 +134,10 @@ function updateRemoteCandidates(
 		snapshot.docChanges().forEach((change) => {
 			if (change.type === 'added') {
 				const data = change.doc.data();
-				const candidate = new RTCIceCandidate(data);
-				pc.addIceCandidate(candidate);
+				if (data) {
+					const candidate = new RTCIceCandidate(data);
+					pc.addIceCandidate(candidate);
+				}
 			}
 		});
 	});

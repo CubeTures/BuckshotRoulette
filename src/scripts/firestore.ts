@@ -5,6 +5,7 @@ import {
 	DocumentReference,
 	getDoc,
 	getFirestore,
+	updateDoc,
 	type DocumentData
 } from 'firebase/firestore';
 import app from './firebase';
@@ -16,11 +17,20 @@ export async function createDocument(data: any) {
 	return await addDoc(rooms, data);
 }
 
+export async function updateDocument(
+	id: string,
+	data: any
+): Promise<DocumentReference<DocumentData, DocumentData>> {
+	const document = doc(rooms, id);
+	await updateDoc(document, data);
+	return document;
+}
+
 export function getDocument(id: string) {
 	return doc(rooms, id);
 }
 
-export async function getData(
+export async function getDocumentData(
 	doc: DocumentReference<DocumentData, DocumentData>
 ): Promise<DocumentData> {
 	const d = await getDoc(doc);

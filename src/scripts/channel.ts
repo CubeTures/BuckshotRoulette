@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { channel, connected, connection } from './store';
+import { channel, connected, connection, preset } from './store';
 import type { Transfer } from '../interfaces/rtcInterfaces';
 
 export function createChannel(
