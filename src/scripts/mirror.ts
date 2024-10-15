@@ -4,8 +4,8 @@ import { isHost } from './store';
 
 // takes instructions from the interpreter and mirrors the state of the host
 export default class Mirror {
-	private pHost!: PlayerData;
-	private pClient!: PlayerData;
+	pHost!: PlayerData;
+	pClient!: PlayerData;
 
 	constructor() {
 		this.pHost = this.getDefaultPlayerData();
@@ -29,6 +29,10 @@ export default class Mirror {
 		} else {
 			this.pClient = transfer.state;
 		}
+
+		console.log(
+			'New State: Host: ' + JSON.stringify(this.pHost) + ', Client: ' + JSON.stringify(this.pClient)
+		);
 	}
 
 	getHealth(target: Target): number {

@@ -7,8 +7,7 @@ import type { GameState } from '../interfaces/gameInterfaces';
 export function broadcastState(transfer: Transfer) {
 	if (isHost() && stateChanged(transfer)) {
 		const gState = get(dealer).getState();
-		const state = chooseState(transfer, gState);
-		const trans = complete({ state });
+		const trans = chooseState(transfer, gState);
 		read(trans);
 		sendMessage(trans);
 	}
@@ -18,12 +17,18 @@ function stateChanged(transfer: Transfer): boolean {
 	return transfer.action !== undefined;
 }
 
-function chooseState(transfer: Transfer, state: GameState) {
+function chooseState(transfer: Transfer, state: GameState): Transfer {
 	if (hostChanged(transfer)) {
-		return state.host;
+		return {
+			player: 'host',
+			state: state.host
+		};
 	}
 
-	return state.client;
+	return {
+		player: 'client',
+		state: state.client
+	};
 }
 
 function hostChanged(transfer: Transfer) {
@@ -70,9 +75,10 @@ export function read(transfer: Transfer) {
 	broadcastState(transfer);
 
 	if (transfer.state) {
-		const m = get(mirror);
-		m.saveState(transfer);
-		mirror.set(m);
+		mirror.update((m) => {
+			m.saveState(transfer);
+			return m;
+		});
 	} else if (transfer.action) {
 		// process action
 		// respond with a state update for mirror

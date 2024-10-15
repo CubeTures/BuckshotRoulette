@@ -11,3 +11,9 @@
 # Router
 
 - All attempted actions go through the router
+
+s h d
+0 0 1
+0 1 0
+1 0 0
+1 1 1

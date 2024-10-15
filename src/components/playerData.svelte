@@ -1,10 +1,11 @@
 <script lang="ts">
 	import type { Target } from '../interfaces/gameInterfaces';
-	import { mirror } from '../scripts/store';
+	import { host, mirror } from '../scripts/store';
 
 	export let target: Target;
+	$: health = (target == 'self') == $host ? $mirror.pHost.health : $mirror.pClient.health;
 </script>
 
 {#if $mirror}
-	<p>Health: {$mirror.getHealth(target)}</p>
+	<p>Health: {health}</p>
 {/if}
