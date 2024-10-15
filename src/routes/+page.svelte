@@ -4,7 +4,9 @@
 	import Transfer from '../components/transfer.svelte';
 </script>
 
-<h1>Buckshot Roulette</h1>
-<Broker />
-<Room />
-<Transfer />
+<div style="gap: 12px; display: flex; flex-direction: column">
+	<h1>Buckshot Roulette</h1>
+	<Broker />
+	<Room />
+	<Transfer />
+</div>

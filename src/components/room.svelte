@@ -1,33 +1,29 @@
 <script lang="ts">
 	import { acceptOffer, createOffer } from '../scripts/connection';
+	import { host } from '../scripts/store';
+	import '../styles/styles.sass';
 
-	let createId: string = '';
-	let joinId: string = '';
+	let id: string = '';
 	let errors: string[] = [];
 
 	async function create() {
-		createId = (await createOffer()).id;
+		id = (await createOffer()).id;
 	}
 
 	async function answer() {
 		try {
-			await acceptOffer(joinId);
+			await acceptOffer(id);
 		} catch (error) {
 			errors.push('Room does not exist.');
 		}
 	}
 </script>
 
-<br />
-<button on:click={create}>Create Room</button>
-{#if createId != ''}
-	<p>Room ID: {createId}</p>
-{:else}
-	<br />
-{/if}
-
-<button on:click={answer}>Join Room</button>
-<input type="text" placeholder="connection id" bind:value={joinId} />
+<div class="container">
+	<input type="text" placeholder="Room ID" bind:value={id} disabled={$host} />
+	<button on:click={create}>Host</button>
+	<button on:click={answer}>Join</button>
+</div>
 
 {#if errors.length > 0}
 	{#each errors as error}

@@ -1,8 +1,10 @@
 import type { Item } from '../interfaces/gameInterfaces';
 
 export default class Player {
-	health: number;
-	items: Item[];
+	private health: number;
+	private items: Item[];
+
+	private readonly maxItems: number = 8;
 
 	constructor() {
 		this.health = 2;
@@ -13,7 +15,19 @@ export default class Player {
 		this.items.push(item);
 	}
 
+	atMaxItems(): boolean {
+		return this.items.length == this.maxItems;
+	}
+
 	takeDamage(health: number) {
 		this.health -= health;
+	}
+
+	setHealth(health: number) {
+		this.health = health;
+	}
+
+	getHealth(): number {
+		return this.health;
 	}
 }

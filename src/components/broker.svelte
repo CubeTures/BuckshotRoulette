@@ -26,7 +26,6 @@
 		if (!$connection) {
 			const pc = new RTCPeerConnection(servers);
 			connection.set(pc);
-			connected.set(true);
 		}
 	});
 </script>

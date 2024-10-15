@@ -1,40 +1,59 @@
 <script lang="ts">
-	import { createChannel, sendMessage } from '../scripts/channel';
+	import type { PartialTransfer } from '../interfaces/rtcInterfaces';
+	import { createChannel } from '../scripts/channel';
+	import { connected } from '../scripts/store';
+	import { Actions, Interpreter, Router } from '../scripts/types';
+	import '../styles/styles.sass';
 
-	let text = '';
 	let received: string = '';
-	let input: HTMLInputElement;
-	let open: boolean = false;
 
 	function onOpen() {
-		console.log('open channel');
-		open = true;
+		console.log('Open Channel');
+		connected.set(true);
 	}
 
 	function onClose() {
-		console.log('close channel');
-		open = false;
+		console.log('Close Channel');
+		connected.set(false);
 	}
 
 	function onMessage(message: string) {
-		console.log('receive');
+		console.log('Receive');
+		Interpreter.read(message);
 		received += message + '\n';
 	}
 
-	function send() {
-		console.log('send');
-		sendMessage(text);
+	function act(partial: PartialTransfer) {
+		console.log('Send');
+		Router.act(partial);
 	}
 
 	createChannel(onOpen, onMessage, onClose);
 </script>
 
-{#if open}
-	<div style="border: 1px dashed black">
+<!-- {#if true}
+	<div class="container">
 		<p>Send Messages</p>
-		<input type="text" bind:value={text} bind:this={input} />
+		<input type="text" bind:value={text} />
 		<button on:click={send}>Send Message</button>
 		<p>Received Messages</p>
 		<textarea bind:value={received} disabled />
+	</div>
+{/if} -->
+
+{#if $connected}
+	<div class="container">
+		<p>You</p>
+		<button on:click={() => act(Actions.ShootSelf)}>Shoot Self</button>
+		<button on:click={() => act(Actions.ShootOpponent)}>Shoot Opponent</button>
+	</div>
+
+	<div class="container">
+		<p>Opponent</p>
+	</div>
+
+	<div class="container">
+		<p>Received</p>
+		<p>{received}</p>
 	</div>
 {/if}

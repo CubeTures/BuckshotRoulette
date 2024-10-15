@@ -1,0 +1,20 @@
+{
+	"player": "host | client",
+	"state": {
+		"health": 0,
+		"items": []
+	},
+	"action": {
+		// just replace the items display list with the updated list and show the item being used
+		"item": {
+			"use": "item_type",
+			"draw": "item_type"
+		},
+		// show the animation then replace previous health with new health
+		"shoot": {
+			"target": "self | opponent",
+			"shell": "live | blank"
+		}
+	},
+	"message": "1 live shell. 2 blank."
+}
