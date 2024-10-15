@@ -32,3 +32,13 @@ export interface RoomPreset {
 	id: string;
 	role: PlayerType;
 }
+
+export interface GameState {
+	host: PlayerData;
+	client: PlayerData;
+}
+
+export interface PlayerData {
+	health: number;
+	items: Item[];
+}

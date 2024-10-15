@@ -1,8 +1,8 @@
 import type { Item } from '../interfaces/gameInterfaces';
 
 export default class Player {
-	private health: number;
-	private items: Item[];
+	health: number;
+	items: Item[];
 
 	private readonly maxItems: number = 8;
 
@@ -21,13 +21,5 @@ export default class Player {
 
 	takeDamage(health: number) {
 		this.health -= health;
-	}
-
-	setHealth(health: number) {
-		this.health = health;
-	}
-
-	getHealth(): number {
-		return this.health;
 	}
 }

@@ -1,4 +1,4 @@
-import type { Item, PlayerType, Target } from './gameInterfaces';
+import type { Item, PlayerData, PlayerType, Target } from './gameInterfaces';
 
 export interface Description {
 	sdp: string | undefined;
@@ -17,10 +17,7 @@ export type PartialTransfer =
 	| { action: TransferAction }
 	| { message: string };
 
-export interface TransferState {
-	health: number;
-	items: Item[];
-}
+export type TransferState = PlayerData;
 
 export interface TransferAction {
 	item?: {
@@ -29,6 +26,5 @@ export interface TransferAction {
 	};
 	shoot?: {
 		target: Target;
-		shell: boolean;
 	};
 }

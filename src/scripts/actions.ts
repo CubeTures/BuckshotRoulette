@@ -3,8 +3,7 @@ import type { PartialTransfer } from '../interfaces/rtcInterfaces';
 export const ShootSelf: PartialTransfer = {
 	action: {
 		shoot: {
-			target: 'self',
-			shell: true
+			target: 'self'
 		}
 	}
 };
@@ -12,8 +11,7 @@ export const ShootSelf: PartialTransfer = {
 export const ShootOpponent: PartialTransfer = {
 	action: {
 		shoot: {
-			target: 'opponent',
-			shell: true
+			target: 'opponent'
 		}
 	}
 };

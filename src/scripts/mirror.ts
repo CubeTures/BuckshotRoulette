@@ -1,3 +1,49 @@
+import type { Item, PlayerData, Target } from '../interfaces/gameInterfaces';
+import type { Transfer } from '../interfaces/rtcInterfaces';
+import { isHost } from './store';
+
+// takes instructions from the interpreter and mirrors the state of the host
 export default class Mirror {
-	// takes instructions from the interpreter and mirrors the state of the host
+	private pHost!: PlayerData;
+	private pClient!: PlayerData;
+
+	constructor() {
+		this.pHost = this.getDefaultPlayerData();
+		this.pClient = this.getDefaultPlayerData();
+	}
+
+	private getDefaultPlayerData(): PlayerData {
+		return {
+			health: 2,
+			items: []
+		};
+	}
+
+	saveState(transfer: Transfer) {
+		if (!transfer.state) {
+			throw new Error('Cannot update null state');
+		}
+
+		if (transfer.player == 'host') {
+			this.pHost = transfer.state;
+		} else {
+			this.pClient = transfer.state;
+		}
+	}
+
+	getHealth(target: Target): number {
+		if (isHost() && target == 'self') {
+			return this.pHost.health;
+		} else {
+			return this.pClient.health;
+		}
+	}
+
+	getItems(target: Target): Item[] {
+		if (isHost() && target == 'self') {
+			return this.pHost.items;
+		} else {
+			return this.pClient.items;
+		}
+	}
 }

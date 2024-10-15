@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { channel, connected, connection, preset } from './store';
+import { channel, connected, connection } from './store';
 import type { Transfer } from '../interfaces/rtcInterfaces';
 import { Interpreter } from './types';
 
@@ -14,14 +14,11 @@ export function createChannel() {
 }
 
 function setChannel(pc: RTCPeerConnection) {
-	console.log('Creating Data Channel');
 	const c = pc.createDataChannel('game', { negotiated: true, id: 9 });
 	listenToChannel(c);
 }
 
 function listenToChannel(c: RTCDataChannel) {
-	console.log('Setting Up Listeners');
-
 	c.addEventListener('open', onOpen);
 	c.addEventListener('message', onMessage);
 	c.addEventListener('close', onClose);

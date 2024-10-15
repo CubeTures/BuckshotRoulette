@@ -13,9 +13,11 @@ export default function usePreset(callback: () => void) {
 				callback();
 			} else {
 				console.log('Waiting for preset');
-				unsubscribePreset = preset.subscribe(() => {
-					callback();
-					unsubscribePreset();
+				unsubscribePreset = preset.subscribe((p) => {
+					if (p?.id && p?.role) {
+						callback();
+						unsubscribePreset();
+					}
 				});
 			}
 

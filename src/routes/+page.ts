@@ -7,7 +7,7 @@ export const load: PageLoad = async ({ url }) => {
 	let id = params.get('id');
 	let role = params.get('role');
 
-	if (id && role) {
+	if (id != null && role != null) {
 		preset.set({
 			id,
 			role: role as PlayerType

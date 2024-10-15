@@ -1,5 +1,6 @@
 import {
 	getOtherPlayer,
+	type GameState,
 	type Item,
 	type PlayerType,
 	type Target
@@ -20,6 +21,19 @@ export default class Dealer {
 
 	constructor() {
 		this.activePlayer = coinFlip() ? 'host' : 'client';
+	}
+
+	getState(): GameState {
+		return {
+			host: {
+				health: this.pHost.health,
+				items: this.pHost.items
+			},
+			client: {
+				health: this.pClient.health,
+				items: this.pClient.items
+			}
+		};
 	}
 
 	shoot(player: PlayerType, target: Target) {
@@ -70,7 +84,7 @@ export default class Dealer {
 	}
 
 	private stageProgression() {
-		if (this.pHost.getHealth() <= 0 || this.pClient.getHealth() <= 0) {
+		if (this.pHost.health <= 0 || this.pClient.health <= 0) {
 			this.stage++;
 		}
 	}

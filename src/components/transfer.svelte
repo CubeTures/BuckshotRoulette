@@ -2,36 +2,31 @@
 	import type { PartialTransfer } from '../interfaces/rtcInterfaces';
 	import { createChannel } from '../scripts/channel';
 	import { connected, receivedActions, sentActions } from '../scripts/store';
-	import { Actions, Router } from '../scripts/types';
+	import { Actions, Interpreter } from '../scripts/types';
 	import '../styles/styles.sass';
+	import Dealer from './dealer.svelte';
+	import PlayerData from './playerData.svelte';
 
 	function act(partial: PartialTransfer) {
-		console.log('Send');
-		Router.act(partial);
+		Interpreter.act(partial);
 	}
 
 	createChannel();
 </script>
 
-<!-- {#if true}
-	<div class="container">
-		<p>Send Messages</p>
-		<input type="text" bind:value={text} />
-		<button on:click={send}>Send Message</button>
-		<p>Received Messages</p>
-		<textarea bind:value={received} disabled />
-	</div>
-{/if} -->
-
 {#if $connected}
+	<Dealer />
+
 	<div class="container">
 		<p>You</p>
+		<PlayerData target="self" />
 		<button on:click={() => act(Actions.ShootSelf)}>Shoot Self</button>
 		<button on:click={() => act(Actions.ShootOpponent)}>Shoot Opponent</button>
 	</div>
 
 	<div class="container">
 		<p>Opponent</p>
+		<PlayerData target="opponent" />
 	</div>
 
 	<div class="container">
