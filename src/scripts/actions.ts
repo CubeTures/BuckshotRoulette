@@ -1,6 +1,4 @@
-import { get } from 'svelte/store';
-import type { PartialTransfer, Transfer } from '../interfaces/rtcInterfaces';
-import { host, isHost } from './store';
+import type { PartialTransfer } from '../interfaces/rtcInterfaces';
 
 export const ShootSelf: PartialTransfer = {
 	action: {

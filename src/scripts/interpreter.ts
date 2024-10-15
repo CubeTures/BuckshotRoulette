@@ -1,12 +1,9 @@
+import type { Writable } from 'svelte/store';
 import type { Transfer } from '../interfaces/rtcInterfaces';
+import { isHost, receivedActions, sentActions } from './store';
 
-export function write(transfer: Transfer) {
-	// try to complete an action
-}
-
-export function read(message: string) {
-	const transfer = parse(message);
-
+export function read(transfer: Transfer) {
+	setLog(transfer);
 	if (transfer.state) {
 		// save the state in the mirror
 	} else if (transfer.action) {
@@ -20,6 +17,33 @@ export function read(message: string) {
 	}
 }
 
-function parse(message: string): Transfer {
+function setLog(transfer: Transfer) {
+	if (isHost()) {
+		if (transfer.player == 'host') {
+			addLog(sentActions, transfer);
+		} else {
+			addLog(receivedActions, transfer);
+		}
+	} else {
+		if (transfer.player == 'host') {
+			addLog(receivedActions, transfer);
+		} else {
+			addLog(sentActions, transfer);
+		}
+	}
+}
+
+function addLog(log: Writable<string[]>, transfer: Transfer) {
+	log.update((l) => {
+		l.push(pretty(transfer));
+		return l;
+	});
+}
+
+export function parse(message: string): Transfer {
 	return JSON.parse(message);
+}
+
+export function pretty(transfer: Transfer): string {
+	return JSON.stringify(transfer, null, 2);
 }

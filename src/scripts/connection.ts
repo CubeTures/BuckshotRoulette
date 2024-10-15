@@ -132,9 +132,9 @@ function updateRemoteCandidates(
 ) {
 	onSnapshot(candidates, (snapshot) => {
 		snapshot.docChanges().forEach((change) => {
-			if (change.type === 'added') {
-				const data = change.doc.data();
-				if (data) {
+			if (pc.remoteDescription) {
+				if (change.type === 'added') {
+					const data = change.doc.data();
 					const candidate = new RTCIceCandidate(data);
 					pc.addIceCandidate(candidate);
 				}

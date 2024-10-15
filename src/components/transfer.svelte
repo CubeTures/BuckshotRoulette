@@ -1,34 +1,16 @@
 <script lang="ts">
 	import type { PartialTransfer } from '../interfaces/rtcInterfaces';
 	import { createChannel } from '../scripts/channel';
-	import { connected } from '../scripts/store';
-	import { Actions, Interpreter, Router } from '../scripts/types';
+	import { connected, receivedActions, sentActions } from '../scripts/store';
+	import { Actions, Router } from '../scripts/types';
 	import '../styles/styles.sass';
-
-	let received: string = '';
-
-	function onOpen() {
-		console.log('Open Channel');
-		connected.set(true);
-	}
-
-	function onClose() {
-		console.log('Close Channel');
-		connected.set(false);
-	}
-
-	function onMessage(message: string) {
-		console.log('Receive');
-		Interpreter.read(message);
-		received += message + '\n';
-	}
 
 	function act(partial: PartialTransfer) {
 		console.log('Send');
 		Router.act(partial);
 	}
 
-	createChannel(onOpen, onMessage, onClose);
+	createChannel();
 </script>
 
 <!-- {#if true}
@@ -53,7 +35,16 @@
 	</div>
 
 	<div class="container">
+		<p>Sent</p>
+		{#each $sentActions as action}
+			<p>{action}</p>
+		{/each}
+	</div>
+
+	<div class="container">
 		<p>Received</p>
-		<p>{received}</p>
+		{#each $receivedActions as action}
+			<p>{action}</p>
+		{/each}
 	</div>
 {/if}

@@ -13,3 +13,5 @@ export function isHost(): boolean {
 }
 
 export const dealer = writable<Dealer>();
+export const sentActions = writable<string[]>([]);
+export const receivedActions = writable<string[]>([]);
