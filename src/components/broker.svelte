@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { connection, preset } from '../scripts/store';
+	import { createChannel } from '../scripts/channel';
 
 	const servers = {
 		iceServers: [
@@ -28,4 +29,6 @@
 			connection.set(pc);
 		}
 	});
+
+	createChannel();
 </script>

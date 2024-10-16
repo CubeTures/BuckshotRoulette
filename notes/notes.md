@@ -8,9 +8,10 @@
 
 - In summary, host acts as both the server and client
 
-# Router
+# Notes
 
-- All attempted actions go through the router
+- At new round, both player's state needs to be updated
+  - Send player who revived first?
 
 s h d
 0 0 1

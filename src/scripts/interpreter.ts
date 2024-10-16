@@ -2,7 +2,27 @@ import { get, type Writable } from 'svelte/store';
 import type { PartialTransfer, Transfer } from '../interfaces/rtcInterfaces';
 import { dealer, isHost, mirror, receivedActions, sentActions } from './store';
 import { sendMessage } from './channel';
-import type { GameState } from '../interfaces/gameInterfaces';
+import type { GameState, PlayerType } from '../interfaces/gameInterfaces';
+
+export function broadcastStart() {
+	if (isHost()) {
+		const gState = get(dealer).getState();
+
+		const trans: Transfer =
+			gState.host.turn == 'host'
+				? {
+						player: 'host',
+						state: gState.host
+					}
+				: {
+						player: 'client',
+						state: gState.client
+					};
+
+		read(trans);
+		sendMessage(trans);
+	}
+}
 
 export function broadcastState(transfer: Transfer) {
 	if (isHost() && stateChanged(transfer)) {
@@ -39,7 +59,7 @@ function hostChanged(transfer: Transfer) {
 	}
 }
 
-export function act(partial: PartialTransfer) {
+export function act(partial: PartialTransfer | Transfer) {
 	// if host:
 	//		record state in dealer
 	//		send action to self and client
@@ -52,6 +72,10 @@ export function act(partial: PartialTransfer) {
 	const transfer = complete(partial);
 	read(transfer);
 	sendMessage(transfer);
+}
+
+function isComplete(transfer: PartialTransfer | Transfer): transfer is Transfer {
+	return Object.hasOwn(transfer, 'player');
 }
 
 function interpretAction(transfer: Transfer) {
@@ -84,7 +108,10 @@ export function read(transfer: Transfer) {
 		// respond with a state update for mirror
 		// play animation
 	} else if (transfer.message) {
-		// display the message
+		mirror.update((m) => {
+			m.saveMessage(transfer.message as string);
+			return m;
+		});
 	} else {
 		throw new Error('No action found in transfer');
 	}
@@ -107,17 +134,23 @@ function setLog(transfer: Transfer) {
 }
 
 function addLog(log: Writable<string[]>, transfer: Transfer) {
+	const count = get(sentActions).length + get(receivedActions).length + 1;
+
 	log.update((l) => {
-		l.push(pretty(transfer));
+		l.push(`${count}: ${pretty(transfer)}`);
 		return l;
 	});
 }
 
-function complete(partial: PartialTransfer): Transfer {
-	return {
-		player: isHost() ? 'host' : 'client',
-		...partial
-	};
+function complete(partial: PartialTransfer | Transfer): Transfer {
+	if (isComplete(partial)) {
+		return partial;
+	} else {
+		return {
+			player: isHost() ? 'host' : 'client',
+			...partial
+		};
+	}
 }
 
 export function parse(message: string): Transfer {

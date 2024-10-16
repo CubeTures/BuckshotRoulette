@@ -1,4 +1,4 @@
-import type { Item, PlayerData, Target } from '../interfaces/gameInterfaces';
+import type { Item, PlayerData, PlayerType, Target } from '../interfaces/gameInterfaces';
 import type { Transfer } from '../interfaces/rtcInterfaces';
 import { isHost } from './store';
 
@@ -6,6 +6,9 @@ import { isHost } from './store';
 export default class Mirror {
 	pHost!: PlayerData;
 	pClient!: PlayerData;
+	activePlayer!: PlayerType;
+	stage: number = 1;
+	message: string = '';
 
 	constructor() {
 		this.pHost = this.getDefaultPlayerData();
@@ -30,24 +33,19 @@ export default class Mirror {
 			this.pClient = transfer.state;
 		}
 
-		console.log(
-			'New State: Host: ' + JSON.stringify(this.pHost) + ', Client: ' + JSON.stringify(this.pClient)
-		);
+		if (transfer.stage) {
+			this.stage = transfer.stage;
+		}
+
+		this.activePlayer = transfer.state.turn;
+
+		// console.log(
+		// 	'New State: Host: ' + JSON.stringify(this.pHost) + ', Client: ' + JSON.stringify(this.pClient)
+		// );
 	}
 
-	getHealth(target: Target): number {
-		if (isHost() && target == 'self') {
-			return this.pHost.health;
-		} else {
-			return this.pClient.health;
-		}
-	}
-
-	getItems(target: Target): Item[] {
-		if (isHost() && target == 'self') {
-			return this.pHost.items;
-		} else {
-			return this.pClient.items;
-		}
+	saveMessage(message: string) {
+		this.message = message;
+		setTimeout(() => (this.message = ''), 5000);
 	}
 }

@@ -18,10 +18,10 @@ export default class Shotgun {
 		for (let i = 0; i < numShells; i++) {
 			const left = numShells - 1 - i;
 
-			if (live == left) {
+			if (live > 0 && live == left) {
 				this.shells.push(true);
 				live--;
-			} else if (coinFlip()) {
+			} else if (live > 0 && coinFlip()) {
 				this.shells.push(true);
 				live--;
 			} else {

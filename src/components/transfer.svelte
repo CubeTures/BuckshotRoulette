@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { PartialTransfer } from '../interfaces/rtcInterfaces';
-	import { createChannel } from '../scripts/channel';
-	import { connected, receivedActions, sentActions } from '../scripts/store';
+	import { host, mirror, receivedActions, sentActions } from '../scripts/store';
 	import { Actions, Interpreter } from '../scripts/types';
 	import '../styles/styles.sass';
 	import Dealer from './dealer.svelte';
@@ -11,35 +10,44 @@
 		Interpreter.act(partial);
 	}
 
-	createChannel();
+	$: myTurn = $mirror?.activePlayer ? ($mirror.activePlayer == 'host') == $host : false;
+	$: stage = $mirror?.stage ? $mirror.stage : 1;
+	$: message = $mirror?.message ? $mirror.message : '';
 </script>
 
-{#if $connected}
-	<Dealer />
+<Dealer />
 
-	<div class="container">
-		<p>You</p>
-		<PlayerData target="self" />
+<div class="container">
+	<p>Round {stage}/3</p>
+	{#if message}
+		<p>{message}</p>
+	{/if}
+</div>
+
+<div class="container">
+	<p>You</p>
+	<PlayerData target="self" />
+	{#if myTurn}
 		<button on:click={() => act(Actions.ShootSelf)}>Shoot Self</button>
 		<button on:click={() => act(Actions.ShootOpponent)}>Shoot Opponent</button>
-	</div>
+	{/if}
+</div>
 
-	<div class="container">
-		<p>Opponent</p>
-		<PlayerData target="opponent" />
-	</div>
+<div class="container">
+	<p>Opponent</p>
+	<PlayerData target="opponent" />
+</div>
 
-	<div class="container">
-		<p>Sent</p>
-		{#each $sentActions as action}
-			<p>{action}</p>
-		{/each}
-	</div>
+<div class="container">
+	<p>Sent</p>
+	{#each $sentActions as action}
+		<p>{action}</p>
+	{/each}
+</div>
 
-	<div class="container">
-		<p>Received</p>
-		{#each $receivedActions as action}
-			<p>{action}</p>
-		{/each}
-	</div>
-{/if}
+<div class="container">
+	<p>Received</p>
+	{#each $receivedActions as action}
+		<p>{action}</p>
+	{/each}
+</div>

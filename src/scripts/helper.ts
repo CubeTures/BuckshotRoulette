@@ -9,3 +9,10 @@ export function randInt(max: number, min?: number) {
 		return Math.floor(Math.random() * (max + 1));
 	}
 }
+
+export function capitalize(str: string) {
+	return str
+		.split('_')
+		.map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+		.join(' ');
+}

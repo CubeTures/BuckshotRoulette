@@ -10,6 +10,7 @@ export interface Transfer {
 	state?: TransferState;
 	action?: TransferAction;
 	message?: string;
+	stage?: number;
 }
 
 export type PartialTransfer =
@@ -17,7 +18,9 @@ export type PartialTransfer =
 	| { action: TransferAction }
 	| { message: string };
 
-export type TransferState = PlayerData;
+export interface TransferState extends PlayerData {
+	turn: PlayerType;
+}
 
 export interface TransferAction {
 	item?: {

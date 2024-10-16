@@ -1,3 +1,5 @@
+import type { TransferState } from './rtcInterfaces';
+
 const items = [
 	'magnifying_glass',
 	'cigarette_pack',
@@ -34,8 +36,8 @@ export interface RoomPreset {
 }
 
 export interface GameState {
-	host: PlayerData;
-	client: PlayerData;
+	host: TransferState;
+	client: TransferState;
 }
 
 export interface PlayerData {
