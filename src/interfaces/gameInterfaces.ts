@@ -1,6 +1,6 @@
 import type { TransferState } from './rtcInterfaces';
 
-const items = [
+export const items = [
 	'magnifying_glass',
 	'cigarette_pack',
 	'can_of_beer',
@@ -11,6 +11,12 @@ const items = [
 	'adrenaline',
 	'expired_medicine'
 ] as const;
+export const weights = [5, 5, 5, 5, 5, 1, 1, 1, 1] as const;
+export const cumulativeWeights = weights.reduce<number[]>(
+	(acc, w, i) => [...acc, (acc[i - 1] || 0) + w],
+	[]
+);
+export const totalWeight = weights.reduce((a, b) => a + b, 0);
 export type Item = (typeof items)[number];
 export function numItems(): number {
 	return items.length;

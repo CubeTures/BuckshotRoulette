@@ -76,8 +76,8 @@
 - Cigarette pack: Take the edge off. Regain 1 Charge.
 - Can of beer: Racks the shotgun. Ejects current shell.
 - Handsaw: Shotgun deals 2 damage.
-- Handcuffs: Opponent skips the next turn
+- Handcuffs: Skips the opponent's next turn.
 - Burner phone: A mysterious voice gives you insight from the future.
 - Inverter: Swap the polarity of the current shell in the chamber.
 - Adrenaline: Steal an item and use it immediately.
-- Expired medicine: 50% chance to regain 2 Charges; otherwise lose 1 Charge.
+- Expired medicine: 50% chance to regain 2 Charges; 50% to lose 1 Charge.
