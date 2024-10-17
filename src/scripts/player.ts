@@ -22,4 +22,15 @@ export default class Player {
 	takeDamage(health: number) {
 		this.health -= health;
 	}
+
+	removeItem(item: Item) {
+		this.items.splice(this.items.indexOf(item), 1);
+	}
+
+	heal(amount: number, max: number) {
+		this.health += amount;
+		if (this.health > max) {
+			this.health = max;
+		}
+	}
 }

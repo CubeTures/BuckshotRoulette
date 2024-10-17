@@ -6,7 +6,7 @@ import {
 	type Target
 } from '../interfaces/gameInterfaces';
 import type { TransferState } from '../interfaces/rtcInterfaces';
-import { coinFlip } from './helper';
+import { capitalize, coinFlip } from './helper';
 import Player from './player';
 import Shotgun from './shotgun';
 import { isHost } from './store';
@@ -19,6 +19,7 @@ export default class Dealer {
 
 	private stage: number = 1;
 	private shotgun: Shotgun = new Shotgun();
+	private usedHandcuffs: boolean = false;
 	private usedItems: Item[] = [];
 	private onDrawItemCallback!: (player: PlayerType, item: Item) => void;
 	private onStageChangeCallback!: (player: PlayerType, state: TransferState, stage: number) => void;
@@ -26,8 +27,21 @@ export default class Dealer {
 	public static readonly livesPerStage = [2, 4, 5];
 	public static readonly itemsPerStage = [0, 2, 4];
 
+	private changeTurnFlag: boolean = false;
+
 	constructor() {
 		this.activePlayer = coinFlip() ? 'host' : 'client';
+
+		const activeMessage = 'You go first.';
+		const inactiveMessage = "You'll go second.";
+		Interpreter.secretMessage(
+			'host',
+			this.activePlayer == 'host' ? activeMessage : inactiveMessage
+		);
+		Interpreter.secretMessage(
+			'client',
+			this.activePlayer == 'client' ? activeMessage : inactiveMessage
+		);
 	}
 
 	getState(): GameState {
@@ -47,45 +61,91 @@ export default class Dealer {
 
 	shoot(player: PlayerType, target: Target) {
 		this.calculateShotResult(player, target);
-		this.clearItems();
-		const newRound = this.stageProgression();
-		this.reloadShotgun(newRound);
+		this.progression();
 	}
 
-	useItem() {
-		// TODO
+	private progression() {
+		const newRound = this.stageProgression();
+		this.reloadShotgun(newRound);
+		this.changeTurn(newRound);
+	}
+
+	useItem(player: PlayerType, item: Item) {
+		console.log(`${capitalize(player)} used ${capitalize(item)}`);
+		this.getPlayer(player).removeItem(item);
+
+		this.usedItems.push(item);
+
+		Interpreter.broadcastState({
+			player,
+			action: {
+				item: {
+					use: item
+				}
+			}
+		});
+
+		if (item == 'magnifying_glass') {
+			const message = this.shotgun.magnifyingGlass();
+			Interpreter.secretMessage(player, message);
+		} else if (item == 'burner_phone') {
+			const message = this.shotgun.burnerPhone();
+			Interpreter.secretMessage(player, message);
+		} else if (item == 'can_of_beer') {
+			const message = this.shotgun.canOfBeer();
+			Interpreter.act({ player, message });
+			this.reloadShotgun();
+		} else if (item == 'cigarette_pack') {
+			this.getPlayer(player).heal(1, Dealer.livesPerStage[this.stage - 1]);
+		} else if (item == 'expired_medicine') {
+			const flip = coinFlip();
+			const p = this.getPlayer(player);
+			if (flip) {
+				p.heal(2, Dealer.livesPerStage[this.stage - 1]);
+			} else {
+				p.takeDamage(1);
+
+				if (p.health <= 0) {
+					this.changeTurnFlag = true;
+					this.progression();
+				}
+			}
+		}
 	}
 
 	myTurn(): boolean {
 		return isHost() && this.activePlayer == 'host';
 	}
 
+	private getPlayer(player: PlayerType) {
+		return player == 'host' ? this.pHost : this.pClient;
+	}
+
 	private calculateShotResult(player: PlayerType, target: Target) {
-		const shell = this.shotgun.getShell();
+		let shell = this.shotgun.getShell();
+		shell = this.usedItems.includes('inverter') ? !shell : shell;
+		console.log(`Shell is ${shell ? 'live' : 'blank'}`);
 
 		if (shell) {
 			if (target == 'self') {
 				this.dealDamage(player);
+				if (this.getPlayer(player).health > 0) {
+					this.changeTurnFlag = true;
+				}
 			} else {
 				this.dealDamage(getOtherPlayer(player));
+				this.changeTurnFlag = true;
 			}
-
-			this.activePlayer = getOtherPlayer(this.activePlayer);
 		} else if (!shell && target == 'opponent') {
-			this.activePlayer = getOtherPlayer(this.activePlayer);
+			this.changeTurnFlag = true;
 		} else if (!shell && target == 'self') {
-			// extra turn
+			console.log('Extra Turn');
 		}
 	}
 
 	private dealDamage(player: PlayerType) {
-		const damage = 1;
-
-		if (player == 'host') {
-			this.pHost.takeDamage(damage);
-		} else {
-			this.pClient.takeDamage(damage);
-		}
+		const damage = this.usedItems.includes('handsaw') ? 2 : 1;
+		this.getPlayer(player).takeDamage(damage);
 	}
 
 	private clearItems() {
@@ -132,13 +192,25 @@ export default class Dealer {
 		}
 	}
 
+	private changeTurn(newRound: boolean = false) {
+		if (this.changeTurnFlag || newRound) {
+			if (this.usedItems.includes('handcuffs') && !newRound) {
+				this.changeTurnFlag = false;
+			} else {
+				this.activePlayer = getOtherPlayer(this.activePlayer);
+			}
+
+			this.clearItems();
+		}
+
+		this.changeTurnFlag = false;
+	}
+
 	onDrawItem(callback: (player: PlayerType, item: Item) => void) {
 		this.onDrawItemCallback = callback;
 	}
 
 	private notifyDrawItem(player: PlayerType, item: Item) {
-		console.log(item);
-
 		if (this.onDrawItemCallback) {
 			this.onDrawItemCallback(player, item);
 		}

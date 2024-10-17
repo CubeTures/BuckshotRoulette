@@ -8,7 +8,7 @@ export default class Mirror {
 	pClient!: PlayerData;
 	activePlayer!: PlayerType;
 	stage: number = 1;
-	message: string = '';
+	messages: string[] = [];
 
 	constructor() {
 		this.pHost = this.getDefaultPlayerData();
@@ -45,7 +45,6 @@ export default class Mirror {
 	}
 
 	saveMessage(message: string) {
-		this.message = message;
-		setTimeout(() => (this.message = ''), 5000);
+		this.messages.push(message);
 	}
 }

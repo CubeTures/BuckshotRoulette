@@ -1,9 +1,10 @@
 <script lang="ts">
 	import type { Target } from '../interfaces/gameInterfaces';
-	import { capitalize } from '../scripts/helper';
 	import { host, mirror } from '../scripts/store';
+	import ItemContainer from './itemContainer.svelte';
 
 	export let target: Target;
+	export let myTurn: boolean;
 
 	$: health = (target == 'self') == $host ? $mirror.pHost.health : $mirror.pClient.health;
 	$: items = (target == 'self') == $host ? $mirror.pHost.items : $mirror.pClient.items;
@@ -11,10 +12,5 @@
 
 {#if $mirror}
 	<p>Health: {health}</p>
-
-	<div style="display: flex; gap: 4px">
-		{#each items as item}
-			<button>{capitalize(item)}</button>
-		{/each}
-	</div>
+	<ItemContainer {items} {myTurn} />
 {/if}

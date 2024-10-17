@@ -57,4 +57,27 @@
 - Adrenaline
   - Steal and immediately use an opponent's item
 - Expired medicine
-  - 50/50 chance to heal or take damage
+  - 50/50 chance to heal 2 or take 1 damage
+
+# Add logic for
+
+- Adrenaline
+
+# Item Conditions
+
+- Cannot use handcuffs if opponent is handcuffed
+- Cannot get handcuffs from adrenaline if opponent is handcuffed
+- Cannot get adrenaline from adrenaline
+- After using adrenaline, if no valid targets exist, don't prompt to pick an item
+
+# Official Descriptions
+
+- Magnifying glass: Check the current round in the chamber.
+- Cigarette pack: Take the edge off. Regain 1 Charge.
+- Can of beer: Racks the shotgun. Ejects current shell.
+- Handsaw: Shotgun deals 2 damage.
+- Handcuffs: Opponent skips the next turn
+- Burner phone: A mysterious voice gives you insight from the future.
+- Inverter: Swap the polarity of the current shell in the chamber.
+- Adrenaline: Steal an item and use it immediately.
+- Expired medicine: 50% chance to regain 2 Charges; otherwise lose 1 Charge.

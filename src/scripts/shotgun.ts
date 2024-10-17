@@ -1,4 +1,4 @@
-import { coinFlip, randInt } from './helper';
+import { capitalize, coinFlip, randInt } from './helper';
 
 export default class Shotgun {
 	private shells!: boolean[];
@@ -44,14 +44,59 @@ export default class Shotgun {
 	}
 
 	getShell(): boolean {
-		const end = this.shells.length - 1;
-		const shell: boolean = this.shells[end];
-		this.shells.pop();
-		return shell;
+		return this.shells.shift() as boolean;
 	}
 
 	isEmpty() {
 		return !this.shells.includes(true);
+	}
+
+	canOfBeer(): string {
+		const shell = this.getShell();
+		return `The skipped shell was ${this.getShellString(shell)}`;
+	}
+
+	magnifyingGlass(): string {
+		const shell: boolean = this.shells[0];
+		return `The current shell is ${this.getShellString(shell)}.`;
+	}
+
+	burnerPhone(): string {
+		if (this.shells.length > 1) {
+			const index = randInt(1, this.shells.length - 1);
+			const shell = this.shells[index];
+			const indexStr = this.getIndexString(index);
+			return `${capitalize(indexStr)} shell... ${this.getShellString(shell)} round.`;
+		} else {
+			return 'There is no future to tell...';
+		}
+	}
+
+	getIndexString(index: number): string {
+		const i = index + 1;
+
+		switch (i) {
+			case 2:
+				return 'second';
+			case 3:
+				return 'third';
+			case 4:
+				return 'fourth';
+			case 5:
+				return 'fifth';
+			case 6:
+				return 'sixth';
+			case 7:
+				return 'seventh';
+			case 8:
+				return 'eighth';
+			default:
+				throw new Error(`Index ${i} not accounted for`);
+		}
+	}
+
+	getShellString(shell: boolean): string {
+		return shell ? 'live' : 'blank';
 	}
 
 	private getNumLiveShells(numShells: number) {

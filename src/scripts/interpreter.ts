@@ -60,15 +60,6 @@ function hostChanged(transfer: Transfer) {
 }
 
 export function act(partial: PartialTransfer | Transfer) {
-	// if host:
-	//		record state in dealer
-	//		send action to self and client
-	//		broadcast state
-
-	// if client:
-	// 		send action to self and host
-	// 		host processes and returns state
-
 	const transfer = complete(partial);
 	read(transfer);
 	sendMessage(transfer);
@@ -88,15 +79,40 @@ function interpretAction(transfer: Transfer) {
 			if (isHost()) {
 				get(dealer).shoot(transfer.player, transfer.action.shoot.target);
 			}
+		} else if (transfer.action.item) {
+			if (transfer.action.item.use) {
+				// animation
+
+				if (isHost()) {
+					get(dealer).useItem(transfer.player, transfer.action.item.use);
+				}
+			} else if (transfer.action.item.draw) {
+				// animation
+			}
 		}
-		// else if(transfer.action.item)
+	}
+}
+
+export function secretMessage(player: PlayerType, message: string) {
+	if (!isHost()) {
+		throw new Error('Only host should emit a message');
+	}
+
+	if (player == 'host') {
+		read({
+			player,
+			message
+		});
+	} else {
+		sendMessage({
+			player,
+			message
+		});
 	}
 }
 
 export function read(transfer: Transfer) {
 	setLog(transfer);
-	interpretAction(transfer);
-	broadcastState(transfer);
 
 	if (transfer.state) {
 		mirror.update((m) => {
@@ -104,9 +120,7 @@ export function read(transfer: Transfer) {
 			return m;
 		});
 	} else if (transfer.action) {
-		// process action
-		// respond with a state update for mirror
-		// play animation
+		interpretAction(transfer);
 	} else if (transfer.message) {
 		mirror.update((m) => {
 			m.saveMessage(transfer.message as string);
@@ -115,6 +129,8 @@ export function read(transfer: Transfer) {
 	} else {
 		throw new Error('No action found in transfer');
 	}
+
+	broadcastState(transfer);
 }
 
 function setLog(transfer: Transfer) {

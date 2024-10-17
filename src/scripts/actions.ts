@@ -1,3 +1,4 @@
+import type { Item } from '../interfaces/gameInterfaces';
 import type { PartialTransfer } from '../interfaces/rtcInterfaces';
 
 export const ShootSelf: PartialTransfer = {
@@ -15,3 +16,11 @@ export const ShootOpponent: PartialTransfer = {
 		}
 	}
 };
+
+export const UseItem = (item: Item): PartialTransfer => ({
+	action: {
+		item: {
+			use: item
+		}
+	}
+});

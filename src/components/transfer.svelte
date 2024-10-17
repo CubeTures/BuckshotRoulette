@@ -12,33 +12,31 @@
 
 	$: myTurn = $mirror?.activePlayer ? ($mirror.activePlayer == 'host') == $host : false;
 	$: stage = $mirror?.stage ? $mirror.stage : 1;
-	$: message = $mirror?.message ? $mirror.message : '';
+	$: messages = $mirror?.messages ? $mirror.messages : [];
 </script>
 
 <Dealer />
 
 <div class="container">
 	<p>Round {stage}/3</p>
-	{#if message}
+	{#each messages as message}
 		<p>{message}</p>
-	{/if}
+	{/each}
 </div>
 
 <div class="container">
 	<p>You</p>
-	<PlayerData target="self" />
-	{#if myTurn}
-		<button on:click={() => act(Actions.ShootSelf)}>Shoot Self</button>
-		<button on:click={() => act(Actions.ShootOpponent)}>Shoot Opponent</button>
-	{/if}
+	<PlayerData target="self" {myTurn} />
+	<button on:click={() => act(Actions.ShootSelf)} disabled={!myTurn}>Shoot Self</button>
+	<button on:click={() => act(Actions.ShootOpponent)} disabled={!myTurn}>Shoot Opponent</button>
 </div>
 
 <div class="container">
 	<p>Opponent</p>
-	<PlayerData target="opponent" />
+	<PlayerData target="opponent" myTurn={false} />
 </div>
 
-<div class="container">
+<!-- <div class="container">
 	<p>Sent</p>
 	{#each $sentActions as action}
 		<p>{action}</p>
@@ -50,4 +48,4 @@
 	{#each $receivedActions as action}
 		<p>{action}</p>
 	{/each}
-</div>
+</div> -->
