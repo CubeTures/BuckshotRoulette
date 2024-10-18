@@ -1,4 +1,3 @@
-import { get } from 'svelte/store';
 import {
 	getOtherPlayer,
 	type GameState,
@@ -10,7 +9,7 @@ import type { TransferState } from '../interfaces/rtcInterfaces';
 import { capitalize, coinFlip } from './helper';
 import Player from './player';
 import Shotgun from './shotgun';
-import { adrenaline, isHost } from './store';
+import { isHost } from './store';
 import { Chest, Interpreter } from './types';
 
 export default class Dealer {
@@ -18,15 +17,15 @@ export default class Dealer {
 	private pClient: Player = new Player();
 	private activePlayer: PlayerType;
 
-	private stage: number = 1;
+	private stage: number = 0;
 	private shotgun: Shotgun = new Shotgun();
-	private usedHandcuffs: boolean = false;
 	private usedItems: Item[] = [];
+	private adrenaline: boolean = false;
 	private onDrawItemCallback!: (player: PlayerType, item: Item) => void;
 	private onStageChangeCallback!: (player: PlayerType, state: TransferState, stage: number) => void;
 
-	public static readonly livesPerStage = [2, 4, 5];
-	public static readonly itemsPerStage = [0, 2, 4];
+	public static readonly livesPerStage = [2, 4, 5, 5];
+	public static readonly itemsPerStage = [0, 2, 4, 4];
 
 	private changeTurnFlag: boolean = false;
 
@@ -72,14 +71,6 @@ export default class Dealer {
 	}
 
 	useItem(player: PlayerType, item: Item) {
-		console.log(`${capitalize(player)} used ${capitalize(item)}`);
-
-		if (get(adrenaline)) {
-			this.getPlayer(getOtherPlayer(player)).removeItem(item);
-		} else {
-			this.getPlayer(player).removeItem(item);
-		}
-
 		this.usedItems.push(item);
 
 		Interpreter.broadcastState({
@@ -90,6 +81,16 @@ export default class Dealer {
 				}
 			}
 		});
+
+		if (this.adrenaline) {
+			console.log(`${player} stole ${item} from ${getOtherPlayer(player)}`);
+			this.getPlayer(getOtherPlayer(player)).removeItem(item);
+			Interpreter.broadcastStatePlayer(getOtherPlayer(player));
+			this.adrenaline = false;
+		} else {
+			console.log(`${capitalize(player)} used ${capitalize(item)}`);
+			this.getPlayer(player).removeItem(item);
+		}
 
 		if (item == 'magnifying_glass') {
 			const message = this.shotgun.magnifyingGlass();
@@ -102,12 +103,12 @@ export default class Dealer {
 			Interpreter.act({ player, message });
 			this.reloadShotgun();
 		} else if (item == 'cigarette_pack') {
-			this.getPlayer(player).heal(1, Dealer.livesPerStage[this.stage - 1]);
+			this.getPlayer(player).heal(1, Dealer.livesPerStage[this.stage]);
 		} else if (item == 'expired_medicine') {
 			const flip = coinFlip();
 			const p = this.getPlayer(player);
 			if (flip) {
-				p.heal(2, Dealer.livesPerStage[this.stage - 1]);
+				p.heal(2, Dealer.livesPerStage[this.stage]);
 			} else {
 				p.takeDamage(1);
 
@@ -116,6 +117,8 @@ export default class Dealer {
 					this.progression();
 				}
 			}
+		} else if (item == 'adrenaline') {
+			this.adrenaline = true;
 		}
 	}
 
@@ -160,7 +163,7 @@ export default class Dealer {
 
 	private stageProgression(): boolean {
 		if (this.pHost.health <= 0 || this.pClient.health <= 0) {
-			const lives = Dealer.livesPerStage[this.stage++];
+			const lives = Dealer.livesPerStage[++this.stage];
 			this.pHost.health = lives;
 			this.pClient.health = lives;
 			this.notifyStageChange();
@@ -183,7 +186,7 @@ export default class Dealer {
 	}
 
 	private drawItems() {
-		const numItems = Dealer.itemsPerStage[this.stage - 1];
+		const numItems = Dealer.itemsPerStage[this.stage];
 		for (let i = 0; i < numItems; i++) {
 			if (!this.pHost.atMaxItems()) {
 				const item = Chest.drawItem();

@@ -24,6 +24,7 @@ export default class Player {
 	}
 
 	removeItem(item: Item) {
+		// console.trace(`Remove item ${item}`);
 		this.items.splice(this.items.indexOf(item), 1);
 	}
 

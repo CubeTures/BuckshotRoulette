@@ -24,6 +24,14 @@ export function broadcastStart() {
 	}
 }
 
+export function broadcastStatePlayer(player: PlayerType) {
+	const gState = get(dealer).getState();
+	const trans =
+		player == 'host' ? { player, state: gState.host } : { player, state: gState.client };
+	read(trans);
+	sendMessage(trans);
+}
+
 export function broadcastState(transfer: Transfer) {
 	if (isHost() && stateChanged(transfer)) {
 		const gState = get(dealer).getState();
@@ -93,6 +101,12 @@ function interpretAction(transfer: Transfer) {
 					} else {
 						adrenaline.set(false);
 					}
+				}
+
+				if (transfer.action.item.use == 'handcuffs') {
+					transfer.player == 'host'
+						? (get(mirror).clientHandcuffs = true)
+						: (get(mirror).hostHandcuffs = true);
 				}
 			} else if (transfer.action.item.draw) {
 				// animation

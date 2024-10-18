@@ -7,8 +7,12 @@ export default class Mirror {
 	pHost!: PlayerData;
 	pClient!: PlayerData;
 	activePlayer!: PlayerType;
-	stage: number = 1;
+	private previousActivePlayer!: PlayerType;
+	stage: number = 0;
 	messages: string[] = [];
+
+	hostHandcuffs: boolean = false;
+	clientHandcuffs: boolean = false;
 
 	constructor() {
 		this.pHost = this.getDefaultPlayerData();
@@ -37,7 +41,16 @@ export default class Mirror {
 			this.stage = transfer.stage;
 		}
 
+		if (this.activePlayer) {
+			this.previousActivePlayer = this.activePlayer;
+		}
+
 		this.activePlayer = transfer.state.turn;
+
+		if (this.activePlayer != this.previousActivePlayer) {
+			this.hostHandcuffs = false;
+			this.clientHandcuffs = false;
+		}
 
 		// console.log(
 		// 	'New State: Host: ' + JSON.stringify(this.pHost) + ', Client: ' + JSON.stringify(this.pClient)

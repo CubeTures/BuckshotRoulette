@@ -8,12 +8,10 @@
 
 - In summary, host acts as both the server and client
 
-# Notes
+# Fixes
 
-- At new round, both player's state needs to be updated
-  - Send player who revived first?
-- Broadcast when player is handcuffed and released from handcuffed
-- Broadcast when reload how many of each
+- Adrenaline not consuming opponent's item (due to not broadcasting a state change when using opponent's item)
+- Still buggy whether able to use an item or not
 
 s h d
 0 0 1

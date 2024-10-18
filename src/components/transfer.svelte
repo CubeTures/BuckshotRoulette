@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PartialTransfer } from '../interfaces/rtcInterfaces';
-	import { host, mirror, receivedActions, sentActions } from '../scripts/store';
+	import { adrenaline, host, mirror, receivedActions, sentActions } from '../scripts/store';
 	import { Actions, Interpreter } from '../scripts/types';
 	import '../styles/styles.sass';
 	import Dealer from './dealer.svelte';
@@ -11,7 +11,7 @@
 	}
 
 	$: myTurn = $mirror?.activePlayer ? ($mirror.activePlayer == 'host') == $host : false;
-	$: stage = $mirror?.stage ? $mirror.stage : 1;
+	$: stage = $mirror?.stage ? $mirror.stage : 0;
 	$: messages = $mirror?.messages ? $mirror.messages : [];
 </script>
 
@@ -35,6 +35,14 @@
 	<p>Opponent</p>
 	<PlayerData target="opponent" myTurn={false} />
 </div>
+
+{#if $mirror}
+	<div class="container">
+		<p>Host Handcuffed: {$mirror.hostHandcuffs}</p>
+		<p>Client Handcuffed: {$mirror.clientHandcuffs}</p>
+		<p>Adrenaline: {$adrenaline ? true : false}</p>
+	</div>
+{/if}
 
 <!-- <div class="container">
 	<p>Sent</p>
