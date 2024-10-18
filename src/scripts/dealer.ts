@@ -1,3 +1,4 @@
+import { get } from 'svelte/store';
 import {
 	getOtherPlayer,
 	type GameState,
@@ -9,7 +10,7 @@ import type { TransferState } from '../interfaces/rtcInterfaces';
 import { capitalize, coinFlip } from './helper';
 import Player from './player';
 import Shotgun from './shotgun';
-import { isHost } from './store';
+import { adrenaline, isHost } from './store';
 import { Chest, Interpreter } from './types';
 
 export default class Dealer {
@@ -72,7 +73,12 @@ export default class Dealer {
 
 	useItem(player: PlayerType, item: Item) {
 		console.log(`${capitalize(player)} used ${capitalize(item)}`);
-		this.getPlayer(player).removeItem(item);
+
+		if (get(adrenaline)) {
+			this.getPlayer(getOtherPlayer(player)).removeItem(item);
+		} else {
+			this.getPlayer(player).removeItem(item);
+		}
 
 		this.usedItems.push(item);
 

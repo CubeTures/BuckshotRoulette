@@ -12,5 +12,5 @@
 
 {#if $mirror}
 	<p>Health: {health}</p>
-	<ItemContainer {items} {myTurn} />
+	<ItemContainer {items} {myTurn} {target} />
 {/if}

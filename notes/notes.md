@@ -12,6 +12,8 @@
 
 - At new round, both player's state needs to be updated
   - Send player who revived first?
+- Broadcast when player is handcuffed and released from handcuffed
+- Broadcast when reload how many of each
 
 s h d
 0 0 1

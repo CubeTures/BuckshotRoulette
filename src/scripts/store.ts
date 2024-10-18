@@ -17,3 +17,5 @@ export const dealer = writable<Dealer>();
 export const mirror = writable<Mirror>();
 export const sentActions = writable<string[]>([]);
 export const receivedActions = writable<string[]>([]);
+
+export const adrenaline = writable<boolean>(false);

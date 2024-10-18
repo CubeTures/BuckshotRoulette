@@ -1,6 +1,6 @@
 import { get, type Writable } from 'svelte/store';
 import type { PartialTransfer, Transfer } from '../interfaces/rtcInterfaces';
-import { dealer, isHost, mirror, receivedActions, sentActions } from './store';
+import { adrenaline, dealer, isHost, mirror, receivedActions, sentActions } from './store';
 import { sendMessage } from './channel';
 import type { GameState, PlayerType } from '../interfaces/gameInterfaces';
 
@@ -85,6 +85,14 @@ function interpretAction(transfer: Transfer) {
 
 				if (isHost()) {
 					get(dealer).useItem(transfer.player, transfer.action.item.use);
+				}
+
+				if ((transfer.player == 'host') == isHost()) {
+					if (transfer.action.item.use == 'adrenaline') {
+						adrenaline.set(true);
+					} else {
+						adrenaline.set(false);
+					}
 				}
 			} else if (transfer.action.item.draw) {
 				// animation
