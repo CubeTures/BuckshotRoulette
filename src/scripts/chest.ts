@@ -11,7 +11,6 @@ import { coinFlip, randInt } from './helper';
 const numberItems: number = numItems();
 
 export function drawItem(): Item {
-	return coinFlip() ? 'adrenaline' : coinFlip() ? 'magnifying_glass' : 'handcuffs';
 	// const index: number = randInt(numberItems - 1);
 	// return getItem(index);
 	return weightedRandom();

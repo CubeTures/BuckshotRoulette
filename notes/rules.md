@@ -59,17 +59,6 @@
 - Expired medicine
   - 50/50 chance to heal 2 or take 1 damage
 
-# Add logic for
-
-- Adrenaline
-
-# Item Conditions
-
-- Cannot use handcuffs if opponent is handcuffed
-- Cannot get handcuffs from adrenaline if opponent is handcuffed
-- Cannot get adrenaline from adrenaline
-- After using adrenaline, if no valid targets exist, don't prompt to pick an item
-
 # Official Descriptions
 
 - Magnifying glass: Check the current round in the chamber.

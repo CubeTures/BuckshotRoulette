@@ -4,6 +4,9 @@
 	import { host, preset } from '../scripts/store';
 	import '../styles/styles.sass';
 
+	let viewId = false;
+	let joining = false;
+
 	let id: string = '';
 	let errors: string[] = [];
 
@@ -20,6 +23,7 @@
 	}
 
 	async function create() {
+		viewId = true;
 		id = (await createOffer()).id;
 	}
 
@@ -30,12 +34,34 @@
 			errors.push('Room does not exist.');
 		}
 	}
+
+	function toJoin() {
+		viewId = true;
+		joining = true;
+	}
+
+	function back() {
+		viewId = false;
+		joining = false;
+	}
 </script>
 
-<div class="container">
-	<input type="text" placeholder="Room ID" bind:value={id} disabled={$host} />
-	<button on:click={create}>Host</button>
-	<button on:click={answer}>Join</button>
+<div class="container" style="display:none"></div>
+
+<div>
+	{#if !viewId}
+		<button on:click={create} class="room-button">Host</button>
+		<button on:click={toJoin} class="room-button">Join</button>
+	{/if}
+
+	{#if viewId}
+		<input class="room-button" type="text" placeholder="Room ID" bind:value={id} disabled={$host} />
+		<br />
+		<button on:click={back} class="room-button">Back</button>
+		{#if joining}
+			<button on:click={answer} class="room-button" disabled={id == ''}>Connect</button>
+		{/if}
+	{/if}
 </div>
 
 {#if errors.length > 0}
