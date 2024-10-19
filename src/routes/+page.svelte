@@ -9,10 +9,10 @@
 </script>
 
 <Background />
-<!-- {#if $connected} -->
-<Sidebar side={'left'} />
-<Sidebar side={'right'} />
-<!-- {/if} -->
+{#if $connected}
+	<Sidebar side={'left'} />
+	<Sidebar side={'right'} />
+{/if}
 
 <div class="main-content">
 	{#if !$connected}

@@ -26,14 +26,14 @@
 
 <div class="container">
 	<p>You</p>
-	<PlayerData target="self" {myTurn} />
+	<PlayerData target="self" />
 	<button on:click={() => act(Actions.ShootSelf)} disabled={!myTurn}>Shoot Self</button>
 	<button on:click={() => act(Actions.ShootOpponent)} disabled={!myTurn}>Shoot Opponent</button>
 </div>
 
 <div class="container">
 	<p>Opponent</p>
-	<PlayerData target="opponent" myTurn={false} />
+	<PlayerData target="opponent" />
 </div>
 
 {#if $mirror}

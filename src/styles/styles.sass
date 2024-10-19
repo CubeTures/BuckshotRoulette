@@ -95,6 +95,15 @@ button
 	margin-right: calc($padding * 2)
 	margin-bottom: calc($padding * 2)
 
+.item-container
+	display: flex
+	justify-content: flex-start
+	position: relative
+	overflow: hidden
+	height: calc((100dvh - (9 * 12px)) / 8)
+	background-color: $darker-transparent
+	border-radius: $border-radius * 2
+
 .item
 	height: $item-height
 	width: $item-height
@@ -109,7 +118,19 @@ button
 	transition: all .3s
 
 	&.right
+		order: 1
 		align-self: flex-end
 
 	&:hover
 		filter: invert(87%)
+
+	&:disabled
+		filter: invert(87%)
+
+.item-text
+	justify-content: center
+	align-items: flex-start
+	display: flex
+	flex-direction: column
+	padding: $padding
+	font-size: 2rem
