@@ -3,6 +3,7 @@
 </script>
 
 <div class="background" style="background-image: url({background})"></div>
+<div class="curtain"></div>
 
 <style lang="sass">
 	.background

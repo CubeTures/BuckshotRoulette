@@ -50,3 +50,5 @@ export interface PlayerData {
 	health: number;
 	items: Item[];
 }
+
+export type Side = 'left' | 'right';

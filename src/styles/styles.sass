@@ -1,13 +1,18 @@
 $container-background: #212121
 $container-transparent: #21212121
+$darker-transparent: #212121
 $border-radius: 12px
 $border-color: #4f4f4f
 $border: 1px solid $border-color
 $padding: 12px
 $font-color: white
 $sidebar-height: calc(100dvh / 8)
+$item-height: calc((100dvh - (9 * $padding)) / 8)
+$sidebar-true-width: $item-height
 $sidebar-width: calc(100dvh / 8 + (2 * $padding))
-$avoiding-sidebar-width: calc(100dvh / 8)
+$white-filter: invert(100%) sepia(100%) saturate(1%) hue-rotate(219deg) brightness(108%) contrast(101%)
+$gray-filter: invert(58%) sepia(0%) saturate(851%) hue-rotate(174deg) brightness(88%) contrast(89%)
+$dark-filter: invert(7%) sepia(90%) saturate(0%) hue-rotate(261deg) brightness(101%) contrast(89%)
 
 @font-face
 	font-family: "VT323"
@@ -24,6 +29,9 @@ html
 h1, h2, h3, h4, h5, p, body
 	margin: 0
 
+button
+	padding: 0
+
 .title
 	font-size: 10rem
 	padding: $padding
@@ -31,8 +39,8 @@ h1, h2, h3, h4, h5, p, body
 
 .curtain
 	top: 0
-	left: $avoiding-sidebar-width
-	right: $avoiding-sidebar-width
+	left: 0
+	right: 0
 	bottom: 0
 	position: absolute
 	backdrop-filter: blur(3px)
@@ -51,16 +59,22 @@ h1, h2, h3, h4, h5, p, body
 	display: flex
 	flex-direction: column
 	z-index: 1
+	max-width: calc( 100dvw - ($sidebar-width * 2) )
 
 .sidebar
 	height: 100%
-	width: $sidebar-height
+	width: $sidebar-true-width
 	position: fixed
 	z-index: 2
 	top: 0
+	padding: $padding
+	display: flex
+	flex-direction: column
+	gap: $padding
 	overflow-x: hidden
 	background-color: $container-transparent
 	backdrop-filter: blur(15px)
+	transition: width .5s
 
 	&.left
 		left: 0
@@ -70,6 +84,9 @@ h1, h2, h3, h4, h5, p, body
 		right: 0
 		border-left: $border
 
+	&:hover
+		width: calc(min(100dvw / 2, 800px)) !important
+
 .room-button
 	font-family: "VT323"
 	font-size: 4rem
@@ -77,3 +94,22 @@ h1, h2, h3, h4, h5, p, body
 	padding: calc($padding / 2) calc($padding * 2)
 	margin-right: calc($padding * 2)
 	margin-bottom: calc($padding * 2)
+
+.item
+	height: $item-height
+	width: $item-height
+	min-width: $item-height
+	background-size: contain
+	background-position: center
+	background-color: #00000000
+	background-repeat: no-repeat
+	border: none
+	border-radius: $border-radius * 2
+	cursor: pointer
+	transition: all .3s
+
+	&.right
+		align-self: flex-end
+
+	&:hover
+		filter: invert(87%)
