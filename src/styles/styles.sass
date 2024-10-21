@@ -29,6 +29,9 @@ html
 h1, h2, h3, h4, h5, p, body
 	margin: 0
 
+h1
+	font-size: 2rem
+
 button
 	padding: 0
 
@@ -55,7 +58,9 @@ button
 .main-content
 	margin-left: $sidebar-width
 	margin-right: $sidebar-width
-	gap: 12px
+	margin-top: $padding
+	margin-bottom: $padding
+	gap: $padding
 	display: flex
 	flex-direction: column
 	z-index: 1
@@ -104,6 +109,9 @@ button
 	background-color: $darker-transparent
 	border-radius: $border-radius * 2
 
+	&.right
+		flex-direction: row-reverse
+
 .item
 	height: $item-height
 	width: $item-height
@@ -128,9 +136,39 @@ button
 		filter: invert(87%)
 
 .item-text
+	padding: $padding
+	font-size: 2rem
+	min-width: calc((100dvw / 2) - ($sidebar-width - $padding))
 	justify-content: center
 	align-items: flex-start
 	display: flex
 	flex-direction: column
+
+.header
+	display: flex
+	flex-direction: column
+	gap: $padding
+
+	.row
+		display: flex
+		justify-content: space-between
+		align-items: center
+		align-content: center
+
+.charge-container
+	@extend .container
+	display: flex
+
+	&.right
+		flex-direction: row-reverse
+
+.icon
+	filter: $white-filter
+
+.message
+	position: absolute
 	padding: $padding
-	font-size: 2rem
+	left: $sidebar-width
+	right: $sidebar-width
+	bottom: $padding
+	text-align: center

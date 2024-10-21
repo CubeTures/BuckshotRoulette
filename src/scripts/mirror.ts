@@ -1,5 +1,5 @@
 import type { Item, PlayerData, PlayerType, Target } from '../interfaces/gameInterfaces';
-import type { Transfer } from '../interfaces/rtcInterfaces';
+import type { Transfer, TransferMessage } from '../interfaces/rtcInterfaces';
 import { isHost } from './store';
 
 // takes instructions from the interpreter and mirrors the state of the host
@@ -10,9 +10,11 @@ export default class Mirror {
 	private previousActivePlayer!: PlayerType;
 	stage: number = 0;
 	messages: string[] = [];
+	shells: boolean[] = [];
 
 	hostHandcuffs: boolean = false;
 	clientHandcuffs: boolean = false;
+	private onMessage!: (message: string) => void;
 
 	constructor() {
 		this.pHost = this.getDefaultPlayerData();
@@ -57,7 +59,34 @@ export default class Mirror {
 		// );
 	}
 
-	saveMessage(message: string) {
-		this.messages.push(message);
+	saveMessage(message: TransferMessage) {
+		this.messages.push(message.message);
+		this.notifyOnMessage(message.message);
+
+		if (message.reload) {
+			this.shells = [];
+		}
+	}
+
+	subscribeOnMessage(callback: (message: string) => void) {
+		if (this.onMessage == undefined || this.onMessage != callback) {
+			this.onMessage = callback;
+
+			if (this.messages) {
+				for (const message of this.messages) {
+					this.notifyOnMessage(message);
+				}
+			}
+		}
+	}
+
+	notifyOnMessage(message: string) {
+		if (this.onMessage) {
+			this.onMessage(message);
+		}
+	}
+
+	saveShell(shell: boolean) {
+		this.shells.push(shell);
 	}
 }

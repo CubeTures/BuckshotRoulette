@@ -100,7 +100,7 @@ export default class Dealer {
 			Interpreter.secretMessage(player, message);
 		} else if (item == 'can_of_beer') {
 			const message = this.shotgun.canOfBeer();
-			Interpreter.act({ player, message });
+			Interpreter.act({ player, message: { message } });
 			this.reloadShotgun();
 		} else if (item == 'cigarette_pack') {
 			this.getPlayer(player).heal(1, Dealer.livesPerStage[this.stage]);
@@ -134,6 +134,8 @@ export default class Dealer {
 		let shell = this.shotgun.getShell();
 		shell = this.usedItems.includes('inverter') ? !shell : shell;
 		console.log(`Shell is ${shell ? 'live' : 'blank'}`);
+
+		Interpreter.act({ player, action: { shoot: { shell } } });
 
 		if (shell) {
 			if (target == 'self') {
@@ -180,7 +182,7 @@ export default class Dealer {
 
 			Interpreter.act({
 				player: 'host',
-				message: this.shotgun.reloadStats
+				message: { message: this.shotgun.reloadStats, reload: true }
 			});
 		}
 	}

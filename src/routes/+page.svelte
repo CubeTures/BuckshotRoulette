@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Background from '../components/background.svelte';
 	import Broker from '../components/broker.svelte';
+	import Header from '../components/header.svelte';
+	import Messages from '../components/messages.svelte';
 	import Room from '../components/room.svelte';
 	import Sidebar from '../components/sidebar.svelte';
 	import Title from '../components/title.svelte';
@@ -22,6 +24,8 @@
 	{/if}
 
 	{#if $connected}
+		<Header />
 		<Transfer />
+		<Messages />
 	{/if}
 </div>

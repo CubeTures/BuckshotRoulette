@@ -17,23 +17,16 @@
 
 <Dealer />
 
-<div class="container">
-	<p>Round {stage}/3</p>
+<!-- <div class="container">
 	{#each messages as message}
 		<p>{message}</p>
 	{/each}
-</div>
+</div> -->
 
 <div class="container">
 	<p>You</p>
-	<PlayerData target="self" />
 	<button on:click={() => act(Actions.ShootSelf)} disabled={!myTurn}>Shoot Self</button>
 	<button on:click={() => act(Actions.ShootOpponent)} disabled={!myTurn}>Shoot Opponent</button>
-</div>
-
-<div class="container">
-	<p>Opponent</p>
-	<PlayerData target="opponent" />
 </div>
 
 {#if $mirror}

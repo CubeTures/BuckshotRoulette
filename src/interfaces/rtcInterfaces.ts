@@ -9,14 +9,14 @@ export interface Transfer {
 	player: PlayerType;
 	state?: TransferState;
 	action?: TransferAction;
-	message?: string;
+	message?: TransferMessage;
 	stage?: number;
 }
 
 export type PartialTransfer =
 	| { state: TransferState }
 	| { action: TransferAction }
-	| { message: string };
+	| { message: TransferMessage };
 
 export interface TransferState extends PlayerData {
 	turn: PlayerType;
@@ -28,6 +28,12 @@ export interface TransferAction {
 		draw?: Item;
 	};
 	shoot?: {
-		target: Target;
+		target?: Target;
+		shell?: boolean;
 	};
+}
+
+export interface TransferMessage {
+	message: string;
+	reload?: boolean;
 }

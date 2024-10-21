@@ -1,5 +1,5 @@
 import { get, type Writable } from 'svelte/store';
-import type { PartialTransfer, Transfer } from '../interfaces/rtcInterfaces';
+import type { PartialTransfer, Transfer, TransferMessage } from '../interfaces/rtcInterfaces';
 import { adrenaline, dealer, isHost, mirror, receivedActions, sentActions } from './store';
 import { sendMessage } from './channel';
 import type { GameState, PlayerType } from '../interfaces/gameInterfaces';
@@ -80,12 +80,17 @@ function isComplete(transfer: PartialTransfer | Transfer): transfer is Transfer 
 function interpretAction(transfer: Transfer) {
 	if (transfer.action) {
 		if (transfer.action.shoot) {
-			// start shoot animation
-			// wait until receiving state update to complete animation
-			// use change in health to determine if blank or not
+			if (transfer.action.shoot.target) {
+				if (isHost()) {
+					get(dealer).shoot(transfer.player, transfer.action.shoot.target);
+				}
 
-			if (isHost()) {
-				get(dealer).shoot(transfer.player, transfer.action.shoot.target);
+				// start shoot animation
+				// wait for shoot.shell to finish animation
+			} else if (transfer.action.shoot.shell !== undefined) {
+				get(mirror).saveShell(transfer.action.shoot.shell);
+
+				// animation
 			}
 		} else if (transfer.action.item) {
 			if (transfer.action.item.use) {
@@ -123,12 +128,12 @@ export function secretMessage(player: PlayerType, message: string) {
 	if (player == 'host') {
 		read({
 			player,
-			message
+			message: { message }
 		});
 	} else {
 		sendMessage({
 			player,
-			message
+			message: { message }
 		});
 	}
 }
@@ -145,7 +150,7 @@ export function read(transfer: Transfer) {
 		interpretAction(transfer);
 	} else if (transfer.message) {
 		mirror.update((m) => {
-			m.saveMessage(transfer.message as string);
+			m.saveMessage(transfer.message as TransferMessage);
 			return m;
 		});
 	} else {
