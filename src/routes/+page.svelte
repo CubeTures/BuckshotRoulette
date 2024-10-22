@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Background from '../components/background.svelte';
 	import Broker from '../components/broker.svelte';
+	import Center from '../components/center.svelte';
 	import Header from '../components/header.svelte';
 	import Messages from '../components/messages.svelte';
 	import Room from '../components/room.svelte';
@@ -26,6 +27,7 @@
 	{#if $connected}
 		<Header />
 		<Transfer />
+		<Center />
 		<Messages />
 	{/if}
 </div>

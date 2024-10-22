@@ -23,7 +23,7 @@
 	{/each}
 </div> -->
 
-<div class="container">
+<!-- <div class="container">
 	<p>You</p>
 	<button on:click={() => act(Actions.ShootSelf)} disabled={!myTurn}>Shoot Self</button>
 	<button on:click={() => act(Actions.ShootOpponent)} disabled={!myTurn}>Shoot Opponent</button>
@@ -35,7 +35,7 @@
 		<p>Client Handcuffed: {$mirror.clientHandcuffs}</p>
 		<p>Adrenaline: {$adrenaline ? true : false}</p>
 	</div>
-{/if}
+{/if} -->
 
 <!-- <div class="container">
 	<p>Sent</p>

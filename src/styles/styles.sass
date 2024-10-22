@@ -34,6 +34,8 @@ h1
 
 button
 	padding: 0
+	font-family: "VT323"
+	// color: white
 
 .title
 	font-size: 10rem
@@ -54,6 +56,10 @@ button
 	border-radius: $border-radius
 	border: $border
 	padding: $padding
+
+	&.clear
+		background-color: $container-transparent
+		backdrop-filter: blur(10px)
 
 .main-content
 	margin-left: $sidebar-width
@@ -78,7 +84,7 @@ button
 	gap: $padding
 	overflow-x: hidden
 	background-color: $container-transparent
-	backdrop-filter: blur(15px)
+	backdrop-filter: blur(10px)
 	transition: width .5s
 
 	&.left
@@ -129,6 +135,9 @@ button
 		order: 1
 		align-self: flex-end
 
+	&.condition
+		filter: invert(87%)
+
 	&:hover
 		filter: invert(87%)
 
@@ -138,7 +147,7 @@ button
 .item-text
 	padding: $padding
 	font-size: 2rem
-	min-width: calc((100dvw / 2) - ($sidebar-width - $padding))
+	min-width: calc((100dvw / 2) - ($sidebar-width - $padding - ($padding / 2)))
 	justify-content: center
 	align-items: flex-start
 	display: flex
@@ -162,8 +171,15 @@ button
 	&.right
 		flex-direction: row-reverse
 
+	&.clear
+		@extend .container, .clear
+
 .icon
 	filter: $white-filter
+
+.buckshot
+	width: calc($item-height * 4)
+	height: calc($item-height * 4)
 
 .message
 	position: absolute

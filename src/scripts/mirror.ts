@@ -69,7 +69,8 @@ export default class Mirror {
 	}
 
 	subscribeOnMessage(callback: (message: string) => void) {
-		if (this.onMessage == undefined || this.onMessage != callback) {
+		if (this.onMessage == undefined) {
+			console.log('here');
 			this.onMessage = callback;
 
 			if (this.messages) {

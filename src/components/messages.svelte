@@ -1,32 +1,33 @@
 <script lang="ts">
+	import { fade } from 'svelte/transition';
 	import { mirror } from '../scripts/store';
 
-	let message: string = '';
 	let backlog: string[] = [];
 
-	mirror.subscribe((m) => {
+	let unsubscribe: () => void;
+	unsubscribe = mirror.subscribe((m) => {
 		m.subscribeOnMessage(addToBacklog);
+
+		if (unsubscribe) {
+			unsubscribe();
+		}
 	});
 
 	function addToBacklog(message: string) {
 		backlog.push(message);
-		readOffBacklog();
-	}
+		backlog = backlog;
 
-	function readOffBacklog() {
-		if (backlog.length == 0) {
-			message = '';
-			return;
-		}
-
-		message = backlog.shift() as string;
-
-		setTimeout(readOffBacklog, 5000);
+		setTimeout(() => {
+			backlog.shift();
+			backlog = backlog;
+		}, 5000);
 	}
 </script>
 
-{#if message}
-	<div class="container message">
-		<h1>{message}</h1>
-	</div>
-{/if}
+<div class="message" style="z-index: 100; display: flex; flex-direction: column-reverse; gap: 12px">
+	{#each backlog as b}
+		<div class="container" transition:fade>
+			<h1>{b}</h1>
+		</div>
+	{/each}
+</div>

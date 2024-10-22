@@ -10,8 +10,10 @@
 
 # Fixes
 
-- Adrenaline not consuming opponent's item (due to not broadcasting a state change when using opponent's item)
-- Still buggy whether able to use an item or not
+- Need to add signals for the adrenaline, handcuffs, and handsaw conditions
+- End game condition
+- Animations for shooting
+- Try to use svelte animation for sidebar items
 
 s h d
 0 0 1
