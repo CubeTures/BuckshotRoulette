@@ -83,12 +83,12 @@ export default class Dealer {
 		});
 
 		if (this.adrenaline) {
-			console.log(`${player} stole ${item} from ${getOtherPlayer(player)}`);
+			// console.log(`${player} stole ${item} from ${getOtherPlayer(player)}`);
 			this.getPlayer(getOtherPlayer(player)).removeItem(item);
 			Interpreter.broadcastStatePlayer(getOtherPlayer(player));
 			this.adrenaline = false;
 		} else {
-			console.log(`${capitalize(player)} used ${capitalize(item)}`);
+			// console.log(`${capitalize(player)} used ${capitalize(item)}`);
 			this.getPlayer(player).removeItem(item);
 		}
 

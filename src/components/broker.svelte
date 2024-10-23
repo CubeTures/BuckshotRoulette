@@ -27,6 +27,7 @@
 		if (!$connection) {
 			const pc = new RTCPeerConnection(servers);
 			connection.set(pc);
+			console.log('Created PC');
 		}
 	});
 
