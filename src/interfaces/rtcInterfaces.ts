@@ -20,6 +20,7 @@ export type PartialTransfer =
 
 export interface TransferState extends PlayerData {
 	turn: PlayerType;
+	winner?: PlayerType;
 }
 
 export interface TransferAction {

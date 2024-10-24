@@ -27,7 +27,7 @@
 	$: myTurn = $mirror?.activePlayer ? ($mirror.activePlayer == 'host') == $host : false;
 	$: enabledSelf = myTurn && !adrenalineSelf && validHandcuffs && validAdrenaline;
 	$: enabledOpponent = adrenalineOpponent && validHandcuffs && item != 'adrenaline';
-	$: enabled = target == 'self' ? enabledSelf : enabledOpponent;
+	$: enabled = !$mirror.gameOver && (target == 'self' ? enabledSelf : enabledOpponent);
 </script>
 
 <button

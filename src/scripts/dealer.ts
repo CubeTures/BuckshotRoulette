@@ -133,7 +133,7 @@ export default class Dealer {
 	private calculateShotResult(player: PlayerType, target: Target) {
 		let shell = this.shotgun.getShell();
 		shell = this.usedItems.includes('inverter') ? !shell : shell;
-		console.log(`Shell is ${shell ? 'live' : 'blank'}`);
+		// console.log(`Shell is ${shell ? 'live' : 'blank'}`);
 
 		Interpreter.act({ player, action: { shoot: { shell } } });
 

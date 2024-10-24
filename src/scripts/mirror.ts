@@ -1,6 +1,10 @@
+import { get } from 'svelte/store';
 import type { Item, PlayerData, PlayerType, Target } from '../interfaces/gameInterfaces';
 import type { Transfer, TransferMessage } from '../interfaces/rtcInterfaces';
-import { isHost } from './store';
+import { host, isHost } from './store';
+
+import winIcon from '$lib/assets/icons/Win.png';
+import loseIcon from '$lib/assets/icons/Lose.png';
 
 // takes instructions from the interpreter and mirrors the state of the host
 export default class Mirror {
@@ -11,6 +15,11 @@ export default class Mirror {
 	stage: number = 0;
 	messages: string[] = [];
 	shells: boolean[] = [];
+
+	hostWins: number = 0;
+	clientWins: number = 0;
+	gameOver: boolean = false;
+	gameOverIcon: string = '';
 
 	hostHandcuffs: boolean = false;
 	clientHandcuffs: boolean = false;
@@ -45,6 +54,22 @@ export default class Mirror {
 
 		if (transfer.stage) {
 			this.stage = transfer.stage;
+			transfer.player == 'host' ? this.hostWins++ : this.clientWins++;
+		}
+
+		if (this.hostWins >= 2) {
+			if (get(host)) {
+				this.win();
+			} else {
+				this.lose();
+			}
+		}
+		if (this.clientWins >= 2) {
+			if (get(host)) {
+				this.lose();
+			} else {
+				this.win();
+			}
 		}
 
 		if (this.activePlayer) {
@@ -96,5 +121,17 @@ export default class Mirror {
 
 	saveShell(shell: boolean) {
 		this.shells.push(shell);
+	}
+
+	win() {
+		this.gameOverIcon = winIcon;
+		this.gameOver = true;
+		console.log('You win');
+	}
+
+	lose() {
+		this.gameOverIcon = loseIcon;
+		this.gameOver = true;
+		console.log('You lose');
 	}
 }

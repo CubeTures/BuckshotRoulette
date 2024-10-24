@@ -52,3 +52,5 @@ export interface PlayerData {
 }
 
 export type Side = 'left' | 'right';
+
+export type Animation = 'SelfSelf' | 'SelfOpponent' | 'OpponentSelf' | 'OpponentOpponent';
