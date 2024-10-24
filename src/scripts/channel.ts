@@ -54,7 +54,6 @@ function onClose() {
 }
 
 function onMessage(event: MessageEvent) {
-	console.log('Message received');
 	const data = event.data;
 	const transfer: Transfer = Interpreter.parse(data);
 	Interpreter.read(transfer);

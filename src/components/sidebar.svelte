@@ -19,8 +19,6 @@
 
 <div class="sidebar {side}">
 	{#each items as item}
-		{#if item != 'adrenaline'}
-			<SidebarItem {item} {side} />
-		{/if}
+		<SidebarItem {item} {side} />
 	{/each}
 </div>

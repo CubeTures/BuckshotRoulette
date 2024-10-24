@@ -85,6 +85,9 @@ function interpretAction(transfer: Transfer) {
 					get(dealer).shoot(transfer.player, transfer.action.shoot.target);
 				}
 
+				get(mirror).hostHandsaw = false;
+				get(mirror).clientHandsaw = false;
+
 				// start shoot animation
 				// wait for shoot.shell to finish animation
 			} else if (transfer.action.shoot.shell !== undefined) {
@@ -112,6 +115,20 @@ function interpretAction(transfer: Transfer) {
 					transfer.player == 'host'
 						? (get(mirror).clientHandcuffs = true)
 						: (get(mirror).hostHandcuffs = true);
+				} else if (transfer.action.item.use == 'handsaw') {
+					transfer.player == 'host'
+						? (get(mirror).hostHandsaw = true)
+						: (get(mirror).clientHandsaw = true);
+				}
+
+				if (transfer.action.item.use == 'adrenaline') {
+					transfer.player == 'host'
+						? (get(mirror).hostAdrenaline = true)
+						: (get(mirror).clientAdrenaline = true);
+				} else {
+					transfer.player == 'host'
+						? (get(mirror).hostAdrenaline = false)
+						: (get(mirror).clientAdrenaline = false);
 				}
 			} else if (transfer.action.item.draw) {
 				// animation

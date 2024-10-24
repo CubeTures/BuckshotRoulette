@@ -14,6 +14,10 @@ export default class Mirror {
 
 	hostHandcuffs: boolean = false;
 	clientHandcuffs: boolean = false;
+	hostAdrenaline: boolean = false;
+	clientAdrenaline: boolean = false;
+	hostHandsaw: boolean = false;
+	clientHandsaw: boolean = false;
 	private onMessage!: (message: string) => void;
 
 	constructor() {
@@ -52,6 +56,10 @@ export default class Mirror {
 		if (this.activePlayer != this.previousActivePlayer) {
 			this.hostHandcuffs = false;
 			this.clientHandcuffs = false;
+			this.hostAdrenaline = false;
+			this.clientAdrenaline = false;
+			this.hostHandsaw = false;
+			this.clientHandsaw = false;
 		}
 
 		// console.log(

@@ -8,20 +8,13 @@
 	export let target: Target;
 
 	$: hasHandcuffs = (target == 'self') == $host ? $mirror.hostHandcuffs : $mirror.clientHandcuffs;
-	$: hasAdrenaline = false;
-	$: hasHandsaw = false;
+	$: hasAdrenaline =
+		(target == 'self') == $host ? $mirror.hostAdrenaline : $mirror.clientAdrenaline;
+	$: hasHandsaw = (target == 'self') == $host ? $mirror.hostHandsaw : $mirror.clientHandsaw;
 </script>
 
-<!-- {#if hasHandcuffs || hasAdrenaline || hasHandsaw} -->
-<div>
-	<div class="container" style="display: flex; flex-direction: column; gap: 12px">
-		<img
-			src={handcuffs}
-			alt="handcuffs"
-			class="item condition"
-			style="cursor: default !important"
-		/>
-		<img src={adrenaline} alt="handcuffs" class="item condition" />
+<div style="visibility: {hasHandcuffs || hasAdrenaline || hasHandsaw ? 'visible' : 'hidden'}">
+	<div class="condition-container">
 		{#if hasHandcuffs}
 			<img
 				src={handcuffs}
@@ -30,6 +23,16 @@
 				style="cursor: default !important"
 			/>
 		{/if}
+		{#if hasHandsaw}
+			<img src={handsaw} alt="handsaw" class="item condition" style="cursor: default !important" />
+		{/if}
+		{#if hasAdrenaline}
+			<img
+				src={adrenaline}
+				alt="adrenaline"
+				class="item condition"
+				style="cursor: default !important"
+			/>
+		{/if}
 	</div>
 </div>
-<!-- {/if} -->
