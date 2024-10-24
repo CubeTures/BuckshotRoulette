@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { createDocument, getDocumentData, getDocument } from './firestore';
+import { createDocument, getDocumentData, getDocument, updateDocumentData } from './firestore';
 import { connection, host } from './store';
 import {
 	addDoc,
@@ -12,19 +12,24 @@ import {
 	type DocumentReference
 } from 'firebase/firestore';
 import type { Description } from '../interfaces/rtcInterfaces';
+import { createChannel, setChannel } from './channel';
 
 // create a room
 export async function createOffer(id?: string) {
 	host.set(true);
 
 	const pc = get(connection);
-	const offer = await getOfferDescription(pc);
-	const doc = await getOfferDoc(offer, id);
+	createChannel(pc);
 
+	const doc = await createOfferDoc();
 	const offerCandidates = collection(doc, 'offerCandidates');
 	const answerCandidates = collection(doc, 'answerCandidates');
 
 	updateLocalCandidates(pc, offerCandidates);
+
+	const offer = await getOfferDescription(pc);
+	updateDocumentData(doc, { offer });
+
 	listenForAnswer(pc, doc);
 	updateRemoteCandidates(pc, answerCandidates);
 
@@ -41,13 +46,8 @@ async function getOfferDescription(pc: RTCPeerConnection): Promise<Description> 
 	};
 }
 
-async function getOfferDoc(offer: Description, id?: string) {
-	if (id) {
-		const doc = getDocument(id);
-		await setDoc(doc, { offer });
-		return doc;
-	}
-	return await createDocument({ offer });
+async function createOfferDoc() {
+	return await createDocument({});
 }
 
 function listenForAnswer(pc: RTCPeerConnection, doc: DocumentReference<any, DocumentData>): void {
@@ -64,6 +64,9 @@ export async function acceptOffer(id: string): Promise<void> {
 	host.set(false);
 
 	const pc = get(connection);
+	console.log(pc);
+	createChannel(pc);
+	// pc.addEventListener('datachannel', setChannel);
 	const doc = getDocument(id);
 
 	const offerCandidates = collection(doc, 'offerCandidates');
@@ -133,6 +136,7 @@ function updateRemoteCandidates(
 	onSnapshot(candidates, (snapshot) => {
 		snapshot.docChanges().forEach((change) => {
 			if (pc.remoteDescription) {
+				console.log(`Change: ${change}`);
 				if (change.type === 'added') {
 					const data = change.doc.data();
 					const candidate = new RTCIceCandidate(data);

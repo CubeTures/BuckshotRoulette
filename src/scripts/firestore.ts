@@ -26,6 +26,13 @@ export async function updateDocument(
 	return document;
 }
 
+export async function updateDocumentData(
+	doc: DocumentReference<DocumentData, DocumentData>,
+	data: any
+) {
+	await updateDoc(doc, data);
+}
+
 export function getDocument(id: string) {
 	return doc(rooms, id);
 }

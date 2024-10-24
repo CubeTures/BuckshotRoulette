@@ -3,25 +3,35 @@ import { channel, connected, connection } from './store';
 import type { Transfer } from '../interfaces/rtcInterfaces';
 import { Interpreter } from './types';
 
-export function createChannel() {
-	console.log('Waiting for Connection to Create Channel');
+// export function createChannel() {
+// 	console.log('Waiting for Connection to Create Channel');
 
-	let unsubscribe: () => void;
-	unsubscribe = connection.subscribe((pc) => {
-		console.log('Connection Notified');
+// 	let unsubscribe: () => void;
+// 	unsubscribe = connection.subscribe((pc) => {
+// 		console.log('Connection Notified');
 
-		if (pc) {
-			console.log('PC Set, Creating Channel');
-			setChannel(pc);
-			unsubscribe();
-		} else {
-			console.log('PC Not Set, Cannot Create Channel');
-		}
-	});
+// 		if (pc) {
+// 			console.log('PC Set, Creating Channel');
+// 			setChannel(pc);
+// 			unsubscribe();
+// 		} else {
+// 			console.log('PC Not Set, Cannot Create Channel');
+// 		}
+// 	});
+// }
+
+export function createChannel(pc: RTCPeerConnection) {
+	const c = pc.createDataChannel('game', { negotiated: true, id: 9 });
+	listenToChannel(c);
 }
 
-function setChannel(pc: RTCPeerConnection) {
-	const c = pc.createDataChannel('game', { negotiated: true, id: 9 });
+export function setChannel(event: RTCDataChannelEvent) {
+	const c = event.channel;
+	if (c.readyState == 'open') {
+		console.log('Already Open');
+	} else {
+		console.log(c.readyState);
+	}
 	listenToChannel(c);
 }
 

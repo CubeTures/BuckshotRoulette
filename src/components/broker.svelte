@@ -28,8 +28,12 @@
 			const pc = new RTCPeerConnection(servers);
 			connection.set(pc);
 			console.log('Created PC');
+
+			pc.addEventListener('connectionstatechange', (p) => {
+				console.log(`Connection state change`);
+			});
 		}
 	});
 
-	createChannel();
+	// createChannel();
 </script>
