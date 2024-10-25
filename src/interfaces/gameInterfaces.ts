@@ -11,7 +11,7 @@ export const items = [
 	'adrenaline',
 	'expired_medicine'
 ] as const;
-export const weights = [5, 5, 5, 5, 5, 1, 1, 1, 1] as const;
+export const weights = [5, 5, 5, 5, 5, 3, 3, 3, 0];
 export const cumulativeWeights = weights.reduce<number[]>(
 	(acc, w, i) => [...acc, (acc[i - 1] || 0) + w],
 	[]
@@ -53,4 +53,4 @@ export interface PlayerData {
 
 export type Side = 'left' | 'right';
 
-export type Animation = 'SelfSelf' | 'SelfOpponent' | 'OpponentSelf' | 'OpponentOpponent';
+export type Animation = 'SelfSelf' | 'SelfOpponent' | 'OpponentSelf' | 'OpponentOpponent' | 'Live';

@@ -18,11 +18,12 @@ export default class Dealer {
 	private activePlayer: PlayerType;
 
 	private stage: number = 0;
+	private tutorialWinner: PlayerType | undefined;
 	private shotgun: Shotgun = new Shotgun();
 	private usedItems: Item[] = [];
 	private adrenaline: boolean = false;
 	private onDrawItemCallback!: (player: PlayerType, item: Item) => void;
-	private onStageChangeCallback!: (player: PlayerType, state: TransferState, stage: number) => void;
+	private onStageChangeCallback!: (winner: PlayerType, state: TransferState, stage: number) => void;
 
 	public static readonly livesPerStage = [2, 4, 5, 5];
 	public static readonly itemsPerStage = [0, 2, 4, 4];
@@ -105,7 +106,7 @@ export default class Dealer {
 		} else if (item == 'cigarette_pack') {
 			this.getPlayer(player).heal(1, Dealer.livesPerStage[this.stage]);
 		} else if (item == 'expired_medicine') {
-			const flip = coinFlip();
+			const flip = coinFlip() || coinFlip();
 			const p = this.getPlayer(player);
 			if (flip) {
 				p.heal(2, Dealer.livesPerStage[this.stage]);
@@ -165,10 +166,12 @@ export default class Dealer {
 
 	private stageProgression(): boolean {
 		if (this.pHost.health <= 0 || this.pClient.health <= 0) {
+			const winner: PlayerType = this.pHost.health > 0 ? 'host' : 'client';
+			this.stage == 0 ? (this.tutorialWinner = winner) : (this.tutorialWinner = undefined);
 			const lives = Dealer.livesPerStage[++this.stage];
 			this.pHost.health = lives;
 			this.pClient.health = lives;
-			this.notifyStageChange();
+			this.notifyStageChange(winner);
 			return true;
 		}
 
@@ -201,13 +204,21 @@ export default class Dealer {
 				this.notifyDrawItem('client', item);
 			}
 		}
+
+		if (this.tutorialWinner) {
+			const player = this.getPlayer(this.tutorialWinner);
+			const item = Chest.drawItem();
+			player.addItem(item);
+			this.notifyDrawItem(this.tutorialWinner, item);
+			this.tutorialWinner = undefined;
+		}
 	}
 
 	private changeTurn(newRound: boolean = false) {
 		if (this.changeTurnFlag || newRound) {
 			if (this.usedItems.includes('handcuffs') && !newRound) {
 				this.changeTurnFlag = false;
-			} else {
+			} else if (this.changeTurnFlag) {
 				this.activePlayer = getOtherPlayer(this.activePlayer);
 			}
 
@@ -227,15 +238,15 @@ export default class Dealer {
 		}
 	}
 
-	onStageChange(callback: (player: PlayerType, state: TransferState, stage: number) => void) {
+	onStageChange(callback: (winner: PlayerType, state: TransferState, stage: number) => void) {
 		this.onStageChangeCallback = callback;
 	}
 
-	private notifyStageChange() {
+	private notifyStageChange(winner: PlayerType) {
 		if (this.onStageChangeCallback) {
 			const gState = this.getState();
 			const state = this.activePlayer == 'host' ? gState.host : gState.client;
-			this.onStageChangeCallback(this.activePlayer, state, this.stage);
+			this.onStageChangeCallback(winner, state, this.stage);
 		}
 	}
 }

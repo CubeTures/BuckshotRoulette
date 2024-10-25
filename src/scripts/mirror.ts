@@ -1,10 +1,13 @@
 import { get } from 'svelte/store';
-import type { Item, PlayerData, PlayerType, Target } from '../interfaces/gameInterfaces';
+import type { Animation, PlayerData, PlayerType, Target } from '../interfaces/gameInterfaces';
 import type { Transfer, TransferMessage } from '../interfaces/rtcInterfaces';
-import { host, isHost } from './store';
+import { frame, host } from './store';
 
 import winIcon from '$lib/assets/icons/Win.png';
 import loseIcon from '$lib/assets/icons/Lose.png';
+import buckshot from '$lib/assets/icons/Buckshot.png';
+import { capitalize } from './helper';
+import { animationDone, getAnimationLength, getFrame } from './animation';
 
 // takes instructions from the interpreter and mirrors the state of the host
 export default class Mirror {
@@ -16,6 +19,8 @@ export default class Mirror {
 	messages: string[] = [];
 	shells: boolean[] = [];
 
+	animating: boolean = false;
+	endShotShell: boolean = false;
 	hostWins: number = 0;
 	clientWins: number = 0;
 	gameOver: boolean = false;
@@ -28,6 +33,7 @@ export default class Mirror {
 	hostHandsaw: boolean = false;
 	clientHandsaw: boolean = false;
 	private onMessage!: (message: string) => void;
+	private onAnimationComplete: (() => void) | undefined;
 
 	constructor() {
 		this.pHost = this.getDefaultPlayerData();
@@ -53,8 +59,11 @@ export default class Mirror {
 		}
 
 		if (transfer.stage) {
+			if (this.stage > 0) {
+				transfer.player == 'host' ? this.hostWins++ : this.clientWins++;
+			}
+
 			this.stage = transfer.stage;
-			transfer.player == 'host' ? this.hostWins++ : this.clientWins++;
 		}
 
 		if (this.hostWins >= 2) {
@@ -101,6 +110,94 @@ export default class Mirror {
 		}
 	}
 
+	animateShoot(player: PlayerType, target: Target) {
+		console.warn('Starting Animation');
+		this.animating = true;
+		const p: Target = (player == 'host') == get(host) ? 'self' : 'opponent';
+		const anim: Animation = (capitalize(p) + capitalize(target)) as Animation;
+		console.log(`Animation: ${anim}`);
+		this.endShotFrame.bind(this);
+		this.nextAnimationFrame(
+			anim,
+			0,
+			(i) => i + 1,
+			(anim) => this.endShotFrame(anim)
+		);
+	}
+
+	nextAnimationFrame(
+		animation: Animation,
+		frameCount: number,
+		changeFrameFunction: (i: number) => number,
+		callback: (animation: Animation) => void,
+		stallAfterComplete: number = 200,
+		reversed: boolean = false
+	) {
+		if (animationDone(animation, frameCount, reversed)) {
+			if (this.onAnimationComplete) {
+				setTimeout(() => callback(animation), stallAfterComplete);
+			} else {
+				setTimeout(
+					() =>
+						this.nextAnimationFrame(
+							animation,
+							frameCount,
+							changeFrameFunction,
+							callback,
+							stallAfterComplete,
+							reversed
+						),
+					200
+				);
+			}
+		} else {
+			frame.set(getFrame(animation, frameCount, reversed));
+			// console.log(get(frame));
+			setTimeout(
+				() =>
+					this.nextAnimationFrame(
+						animation,
+						changeFrameFunction(frameCount),
+						changeFrameFunction,
+						callback,
+						stallAfterComplete,
+						reversed
+					),
+				100
+			);
+		}
+	}
+
+	endShotFrame(animation: Animation) {
+		console.warn('End Shot Animation');
+
+		if (this.endShotShell) {
+			this.nextAnimationFrame(
+				'Live',
+				0,
+				(i) => i + 1,
+				() => this.endAnimation(),
+				0
+			);
+		} else {
+			this.nextAnimationFrame(
+				animation,
+				getAnimationLength(animation) - 1,
+				(i) => i - 1,
+				() => this.endAnimation(),
+				200,
+				true
+			);
+		}
+	}
+
+	endAnimation() {
+		console.warn('Completing Animation');
+		this.animating = false;
+		frame.set(buckshot);
+		this.onAnimationComplete && this.onAnimationComplete();
+	}
+
 	subscribeOnMessage(callback: (message: string) => void) {
 		if (this.onMessage == undefined) {
 			this.onMessage = callback;
@@ -119,8 +216,14 @@ export default class Mirror {
 		}
 	}
 
-	saveShell(shell: boolean) {
-		this.shells.push(shell);
+	saveShell(shell: boolean, callback: () => void) {
+		this.endShotShell = shell;
+		this.onAnimationComplete = () => {
+			console.log(`Completing animation: ${shell ? 'live' : 'blank'}`);
+			this.shells.push(shell);
+			this.animating = false;
+			callback();
+		};
 	}
 
 	win() {

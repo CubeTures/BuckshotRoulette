@@ -10,10 +10,14 @@
 
 # Fixes
 
-- Need to add signals for the adrenaline, handcuffs, and handsaw conditions
-- End game condition
-- Animations for shooting
-- Try to use svelte animation for sidebar items
+- Updated item drawings
+- Transition for UI elements (charges especially!)
+- Test on deploy
+
+# Future
+
+- Item animations
+- Shot reveals dealer
 
 s h d
 0 0 1

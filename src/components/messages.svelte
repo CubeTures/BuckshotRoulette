@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition';
+	import { fly, slide } from 'svelte/transition';
 	import { mirror } from '../scripts/store';
 
 	let backlog: string[] = [];
@@ -14,19 +14,19 @@
 	});
 
 	function addToBacklog(message: string) {
-		backlog.push(message);
+		backlog.unshift(message);
 		backlog = backlog;
 
 		setTimeout(() => {
-			backlog.shift();
+			backlog.pop();
 			backlog = backlog;
 		}, 5000);
 	}
 </script>
 
-<div class="message" style="z-index: 100; display: flex; flex-direction: column-reverse; gap: 12px">
+<div class="message" style="z-index: 100; display: flex; flex-direction: column-reverse">
 	{#each backlog as b}
-		<div class="container" transition:fade>
+		<div class="container" in:fly|global out:slide|global style="margin-top: 12px">
 			<h1>{b}</h1>
 		</div>
 	{/each}

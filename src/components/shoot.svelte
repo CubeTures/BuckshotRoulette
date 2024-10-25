@@ -1,7 +1,7 @@
 <script lang="ts">
-	import buckshot from '$lib/assets/icons/Buckshot.png';
+	import { slide } from 'svelte/transition';
 	import type { PartialTransfer } from '../interfaces/rtcInterfaces';
-	import { host, mirror } from '../scripts/store';
+	import { frame, host, mirror } from '../scripts/store';
 	import { Actions, Interpreter } from '../scripts/types';
 
 	$: myTurn = $mirror?.activePlayer ? ($mirror.activePlayer == 'host') == $host : false;
@@ -11,20 +11,21 @@
 	}
 </script>
 
-<div
-	class="container"
-	style="display: flex; flex-direction: column; cursor: pointer; align-items: center; transition: all 1s"
->
+<div class="container" style="display: flex; flex-direction: column; align-items: center">
 	{#if $mirror?.gameOver}
 		<img src={$mirror.gameOverIcon} alt="gameOver" class="buckshot" />
 	{:else}
-		<img src={buckshot} alt="shoot" class="buckshot" />
+		<img src={$frame} alt="shoot" class="buckshot" />
 
-		{#if myTurn}
+		{#if myTurn && !$mirror.animating}
 			<div style="margin-top: 12px">
-				<div style="display: flex; justify-content: center">
-					<button class="room-button" on:click={() => act(Actions.ShootSelf)}>YOU</button>
-					<button class="room-button" on:click={() => act(Actions.ShootOpponent)}>OPPONENT</button>
+				<div style="display: flex; justify-content: center; flex-wrap: wrap">
+					<button class="room-button" on:click={() => act(Actions.ShootSelf)}>SELF</button>
+					<button
+						class="room-button"
+						on:click={() => act(Actions.ShootOpponent)}
+						style="margin-right: 0px">OPPONENT</button
+					>
 				</div>
 
 				<h1

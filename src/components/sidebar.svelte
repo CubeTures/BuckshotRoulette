@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { slide } from 'svelte/transition';
 	import { type Side } from '../interfaces/gameInterfaces';
 	import { host, mirror } from '../scripts/store';
 	import '../styles/styles.sass';
@@ -17,7 +18,7 @@
 		: [];
 </script>
 
-<div class="sidebar {side}">
+<div class="sidebar {side}" transition:slide|global={{ duration: 1000 }}>
 	{#each items as item}
 		<SidebarItem {item} {side} />
 	{/each}

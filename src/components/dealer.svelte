@@ -31,9 +31,9 @@
 		Interpreter.act(transfer);
 	}
 
-	function onStageChange(player: PlayerType, state: TransferState, stage: number) {
+	function onStageChange(winner: PlayerType, state: TransferState, stage: number) {
 		const transfer: Transfer = {
-			player,
+			player: winner,
 			state,
 			stage
 		};

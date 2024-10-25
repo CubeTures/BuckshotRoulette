@@ -8,17 +8,19 @@
 	$: shells = $mirror?.shells ? $mirror.shells : [];
 </script>
 
-<div
-	class="container"
-	style="width: {size * 8}px; min-height: {size}px; display: flex; justify-content: center"
->
-	{#each shells as shell}
-		<img
-			src={shell ? live : blank}
-			alt={shell ? 'live' : 'blank'}
-			width={size}
-			height={size}
-			class="icon"
-		/>
-	{/each}
-</div>
+{#if shells.length > 0}
+	<div
+		class="container"
+		style="width: {size * 8}px; min-height: {size}px; display: flex; justify-content: center"
+	>
+		{#each shells as shell}
+			<img
+				src={shell ? live : blank}
+				alt={shell ? 'live' : 'blank'}
+				width={size}
+				height={size}
+				class="icon"
+			/>
+		{/each}
+	</div>
+{/if}

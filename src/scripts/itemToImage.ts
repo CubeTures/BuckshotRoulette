@@ -43,7 +43,7 @@ const descriptions: Record<Item, string> = {
 	burner_phone: 'A mysterious voice gives you insight from the future.',
 	inverter: 'Swap the polarity of the current shell in the chamber.',
 	adrenaline: 'Steal an item and use it immediately. Cannot steal adrenaline.',
-	expired_medicine: '50% chance to regain 2 Charges; 50% to lose 1 Charge.'
+	expired_medicine: '75% chance to regain 2 Charges; 25% to lose 1 Charge.'
 };
 
 export function getDescription(item: Item): string {

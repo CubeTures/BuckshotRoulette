@@ -4,6 +4,8 @@ import { adrenaline, dealer, isHost, mirror, receivedActions, sentActions } from
 import { sendMessage } from './channel';
 import type { GameState, PlayerType } from '../interfaces/gameInterfaces';
 
+let backlog: Transfer[] = [];
+
 export function broadcastStart() {
 	if (isHost()) {
 		const gState = get(dealer).getState();
@@ -19,8 +21,7 @@ export function broadcastStart() {
 						state: gState.client
 					};
 
-		read(trans);
-		sendMessage(trans);
+		act(trans);
 	}
 }
 
@@ -28,16 +29,14 @@ export function broadcastStatePlayer(player: PlayerType) {
 	const gState = get(dealer).getState();
 	const trans =
 		player == 'host' ? { player, state: gState.host } : { player, state: gState.client };
-	read(trans);
-	sendMessage(trans);
+	act(trans);
 }
 
 export function broadcastState(transfer: Transfer) {
 	if (isHost() && stateChanged(transfer)) {
 		const gState = get(dealer).getState();
 		const trans = chooseState(transfer, gState);
-		read(trans);
-		sendMessage(trans);
+		act(trans);
 	}
 }
 
@@ -69,8 +68,14 @@ function hostChanged(transfer: Transfer) {
 
 export function act(partial: PartialTransfer | Transfer) {
 	const transfer = complete(partial);
-	read(transfer);
-	sendMessage(transfer);
+
+	if (isHost()) {
+		sendMessage(transfer);
+		read(transfer);
+	} else {
+		read(transfer);
+		sendMessage(transfer);
+	}
 }
 
 function isComplete(transfer: PartialTransfer | Transfer): transfer is Transfer {
@@ -81,19 +86,16 @@ function interpretAction(transfer: Transfer) {
 	if (transfer.action) {
 		if (transfer.action.shoot) {
 			if (transfer.action.shoot.target) {
+				get(mirror).animateShoot(transfer.player, transfer.action.shoot.target);
+
 				if (isHost()) {
 					get(dealer).shoot(transfer.player, transfer.action.shoot.target);
 				}
 
 				get(mirror).hostHandsaw = false;
 				get(mirror).clientHandsaw = false;
-
-				// start shoot animation
-				// wait for shoot.shell to finish animation
 			} else if (transfer.action.shoot.shell !== undefined) {
-				get(mirror).saveShell(transfer.action.shoot.shell);
-
-				// animation
+				get(mirror).saveShell(transfer.action.shoot.shell, flushBacklog);
 			}
 		} else if (transfer.action.item) {
 			if (transfer.action.item.use) {
@@ -156,6 +158,19 @@ export function secretMessage(player: PlayerType, message: string) {
 }
 
 export function read(transfer: Transfer) {
+	if (get(mirror)?.gameOver) return;
+
+	if (get(mirror)?.animating) {
+		// console.log(`Animating; ${JSON.stringify(transfer)}`);
+		if (transfer.action?.shoot?.shell !== undefined) {
+			// interpret
+		} else {
+			console.log(`Currently animating, adding to backlog: ${JSON.stringify(transfer)}`);
+			backlog.push(transfer);
+			return;
+		}
+	}
+
 	setLog(transfer);
 
 	if (transfer.state) {
@@ -177,6 +192,20 @@ export function read(transfer: Transfer) {
 	broadcastState(transfer);
 }
 
+function flushBacklog() {
+	// keep removing from the top of the backlog until another animation
+	console.warn('Flushing backlog');
+
+	while (backlog.length > 0) {
+		if (!get(mirror).animating) {
+			const transfer = backlog.shift() as Transfer;
+			read(transfer);
+		} else {
+			break;
+		}
+	}
+}
+
 function setLog(transfer: Transfer) {
 	if (isHost()) {
 		if (transfer.player == 'host') {
@@ -191,6 +220,8 @@ function setLog(transfer: Transfer) {
 			addLog(sentActions, transfer);
 		}
 	}
+
+	console.log(transfer);
 }
 
 function addLog(log: Writable<string[]>, transfer: Transfer) {
