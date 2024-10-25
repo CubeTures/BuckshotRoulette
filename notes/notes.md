@@ -10,7 +10,6 @@
 
 # Fixes
 
-- Transition for UI elements (charges especially!)
 - Test on deploy
 
 # Future
