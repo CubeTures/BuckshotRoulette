@@ -10,7 +10,6 @@
 
 # Fixes
 
-- Updated item drawings
 - Transition for UI elements (charges especially!)
 - Test on deploy
 

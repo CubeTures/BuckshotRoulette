@@ -1,7 +1,7 @@
 <script lang="ts">
-	import handcuffs from '$lib/assets/items/Handcuffs.png';
-	import adrenaline from '$lib/assets/items/Adrenaline.png';
-	import handsaw from '$lib/assets/items/Handsaw.png';
+	import handcuffs from '$lib/assets/items/handcuffs_.png';
+	import adrenaline from '$lib/assets/items/adrenaline_.png';
+	import handsaw from '$lib/assets/items/handsaw_.png';
 	import type { Target } from '../interfaces/gameInterfaces';
 	import { host, mirror } from '../scripts/store';
 

@@ -1,21 +1,24 @@
-import magnifying_glass from '$lib/assets/items/MagnifyingGlass.png';
-import cigarette_pack from '$lib/assets/items/CigarettePack.png';
-import can_of_beer from '$lib/assets/items/CanOfBeer.png';
-import handsaw from '$lib/assets/items/Handsaw.png';
-import handcuffs from '$lib/assets/items/Handcuffs.png';
-import burner_phone from '$lib/assets/items/BurnerPhone.png';
-import inverter from '$lib/assets/items/Inverter.png';
-import adrenaline from '$lib/assets/items/Adrenaline.png';
-import expired_medicine from '$lib/assets/items/ExpiredMedicine.png';
-// import magnifying_glass from '$lib/assets/items/magnifying_glass.svg';
-// import cigarette_pack from '$lib/assets/items/cigarette_pack.svg';
-// import can_of_beer from '$lib/assets/items/can_of_beer.svg';
-// import handsaw from '$lib/assets/items/handsaw.svg';
-// import handcuffs from '$lib/assets/items/handcuffs.svg';
-// import burner_phone from '$lib/assets/items/burner_phone.svg';
-// import inverter from '$lib/assets/items/inverter.svg';
-// import adrenaline from '$lib/assets/items/adrenaline.svg';
-// import expired_medicine from '$lib/assets/items/expired_medicine.svg';
+// Original Edition
+// import magnifying_glass from '$lib/assets/items/MagnifyingGlass.png';
+// import cigarette_pack from '$lib/assets/items/CigarettePack.png';
+// import can_of_beer from '$lib/assets/items/CanOfBeer.png';
+// import handsaw from '$lib/assets/items/Handsaw.png';
+// import handcuffs from '$lib/assets/items/Handcuffs.png';
+// import burner_phone from '$lib/assets/items/BurnerPhone.png';
+// import inverter from '$lib/assets/items/Inverter.png';
+// import adrenaline from '$lib/assets/items/Adrenaline.png';
+// import expired_medicine from '$lib/assets/items/ExpiredMedicine.png';
+
+// New Edition
+import magnifying_glass from '$lib/assets/items/magnifying_glass.png';
+import cigarette_pack from '$lib/assets/items/cigarette_pack.png';
+import can_of_beer from '$lib/assets/items/can_of_beer.png';
+import handsaw from '$lib/assets/items/handsaw_.png';
+import handcuffs from '$lib/assets/items/handcuffs_.png';
+import burner_phone from '$lib/assets/items/burner_phone.png';
+import inverter from '$lib/assets/items/inverter_.png';
+import adrenaline from '$lib/assets/items/adrenaline_.png';
+import expired_medicine from '$lib/assets/items/expired_medicine.png';
 import type { Item } from '../interfaces/gameInterfaces';
 
 const translate: Record<Item, string> = {
