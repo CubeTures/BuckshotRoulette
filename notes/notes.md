@@ -17,6 +17,7 @@
 - Sudden death 3rd round
 - Keyboard shortcuts
 - More flavorful messages
+- Refactor and convert to svelte 5
 
 s h d
 0 0 1
