@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { connection, preset } from '../scripts/store';
+	import { channel, connection, preset } from '../scripts/store';
 	import { createChannel } from '../scripts/channel';
+	import { get } from 'svelte/store';
 
 	const servers = {
 		iceServers: [
@@ -30,7 +31,11 @@
 			console.log('Created PC');
 
 			pc.addEventListener('connectionstatechange', (p) => {
-				console.log(`Connection state change`);
+				if (get(channel)) {
+					console.log(`Connection state change: ${get(channel).readyState}`);
+				} else {
+					console.log(`Connection state change: ???`);
+				}
 			});
 		}
 	});

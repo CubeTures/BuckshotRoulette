@@ -21,6 +21,7 @@ import { Interpreter } from './types';
 // }
 
 export function createChannel(pc: RTCPeerConnection) {
+	console.log('Creating Channel');
 	const c = pc.createDataChannel('game', { negotiated: true, id: 9 });
 	listenToChannel(c);
 }
@@ -28,10 +29,12 @@ export function createChannel(pc: RTCPeerConnection) {
 export function setChannel(event: RTCDataChannelEvent) {
 	const c = event.channel;
 	if (c.readyState == 'open') {
-		console.log('Already Open');
+		console.warn('Channel Already Open');
+		onOpen();
 	} else {
-		console.log(c.readyState);
+		console.log(`Channel at State: ${c.readyState}`);
 	}
+
 	listenToChannel(c);
 }
 
