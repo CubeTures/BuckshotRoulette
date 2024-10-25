@@ -8,16 +8,15 @@
 
 - In summary, host acts as both the server and client
 
-# Fixes
-
-- Test on deploy
-
 # Future
 
 - Item animations
 - Toggle items and change weights before playing
 - Player stats (and save item preferences)
 - Shot reveals dealer
+- Sudden death 3rd round
+- Keyboard shortcuts
+- More flavorful messages
 
 s h d
 0 0 1

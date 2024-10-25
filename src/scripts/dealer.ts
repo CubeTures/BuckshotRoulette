@@ -26,7 +26,7 @@ export default class Dealer {
 	private onStageChangeCallback!: (winner: PlayerType, state: TransferState, stage: number) => void;
 
 	public static readonly livesPerStage = [2, 4, 5, 5];
-	public static readonly itemsPerStage = [0, 2, 4, 4];
+	public static readonly itemsPerStage = [0, 2, 3, 4];
 
 	private changeTurnFlag: boolean = false;
 
