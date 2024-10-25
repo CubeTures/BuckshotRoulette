@@ -15,6 +15,8 @@
 # Future
 
 - Item animations
+- Toggle items and change weights before playing
+- Player stats (and save item preferences)
 - Shot reveals dealer
 
 s h d

@@ -106,7 +106,7 @@ export default class Dealer {
 		} else if (item == 'cigarette_pack') {
 			this.getPlayer(player).heal(1, Dealer.livesPerStage[this.stage]);
 		} else if (item == 'expired_medicine') {
-			const flip = coinFlip() || coinFlip();
+			const flip = coinFlip();
 			const p = this.getPlayer(player);
 			if (flip) {
 				p.heal(2, Dealer.livesPerStage[this.stage]);
