@@ -3,6 +3,7 @@
 	import Broker from '../components/broker.svelte';
 	import Center from '../components/center.svelte';
 	import Header from '../components/header.svelte';
+	import Log from '../components/log.svelte';
 	import Messages from '../components/messages.svelte';
 	import Room from '../components/room.svelte';
 	import Sidebar from '../components/sidebar.svelte';
@@ -28,6 +29,7 @@
 		<Header />
 		<Transfer />
 		<Center />
+		<Log />
 		<Messages />
 	{/if}
 </div>

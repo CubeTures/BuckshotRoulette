@@ -108,6 +108,10 @@ export default class Mirror {
 		if (message.reload) {
 			this.shells = [];
 		}
+
+		if (message.shell !== undefined) {
+			this.shells.push(message.shell);
+		}
 	}
 
 	animateShoot(player: PlayerType, target: Target) {

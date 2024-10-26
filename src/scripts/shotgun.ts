@@ -51,9 +51,9 @@ export default class Shotgun {
 		return !this.shells.includes(true);
 	}
 
-	canOfBeer(): string {
+	canOfBeer(): readonly [string, boolean] {
 		const shell = this.getShell();
-		return `The skipped shell was ${this.getShellString(shell)}`;
+		return [`The skipped shell was ${this.getShellString(shell)}`, shell];
 	}
 
 	magnifyingGlass(): string {

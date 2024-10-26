@@ -37,4 +37,5 @@ export interface TransferAction {
 export interface TransferMessage {
 	message: string;
 	reload?: boolean;
+	shell?: boolean;
 }

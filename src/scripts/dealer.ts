@@ -100,8 +100,8 @@ export default class Dealer {
 			const message = this.shotgun.burnerPhone();
 			Interpreter.secretMessage(player, message);
 		} else if (item == 'can_of_beer') {
-			const message = this.shotgun.canOfBeer();
-			Interpreter.act({ player, message: { message } });
+			const [message, shell] = this.shotgun.canOfBeer();
+			Interpreter.act({ player, message: { message, shell } });
 			this.reloadShotgun();
 		} else if (item == 'cigarette_pack') {
 			this.getPlayer(player).heal(1, Dealer.livesPerStage[this.stage]);

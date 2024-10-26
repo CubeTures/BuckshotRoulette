@@ -196,3 +196,33 @@ button
 	flex-direction: column
 	gap: 12px
 	width: $item-height
+
+.log-container
+	overflow-y: auto
+	overflow-x: hidden
+	position: fixed
+	top: 0
+	bottom: 0
+	left: 0
+	right: 0
+	background-color: $container-background
+	padding: $padding calc($sidebar-true-width + $padding)
+	display: flex
+	flex-direction: column-reverse
+	z-index: 150
+	justify-content: flex-end
+	gap: $padding
+
+.log-button
+	background-color: $container-background
+	border: $border
+	font-size: 2rem
+	color: white
+	display: inline-block
+	padding: calc($padding / 2) $padding
+	border-radius: $border-radius
+
+	&.corner
+		position: absolute
+		bottom: $padding
+		right: calc($sidebar-true-width + $padding * 3)

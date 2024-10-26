@@ -15,6 +15,7 @@
 - Player stats (and save item preferences)
 - Shot reveals dealer
 - Sudden death 3rd round
+- Reload animation
 - Keyboard shortcuts
 - More flavorful messages
 - Refactor and convert to svelte 5
